@@ -1,0 +1,64 @@
+project:
+  type: book
+  output-dir: _book
+
+title-block-banner: assets/branding/images/cover-image.jpg
+
+book:
+  title: "Public Health Analytics Playbook"
+  subtitle: "Exploring Public Health Issues with Reproducible Code"
+  author:
+    - name: "André van Zyl"
+      id: avz
+      orcid: 0000-0001-6872-5276
+      url: https://www.linkedin.com/in/andre-van-zyl/
+      affiliation:
+        - name: Intersect Collaborations LLC
+          city: Cincinnati
+          state: OH
+          url: https://www.intersectcollaborations.com/
+  date: last-modified
+  date-format: "MMMM YYYY"
+  cover-image: assets/branding/images/cover-image.jpg
+  favicon: assets/branding/icons/intesect icon v1.png
+
+  chapters:
+    - index.qmd
+    - part: "Analyses"
+      chapters:
+        - chapters/01-drug-overdose-crisis.qmd
+    - part: "Appendices"
+      chapters:
+        - chapters/B-development-tools.qmd
+        - chapters/C-glossary.qmd
+
+  sidebar:
+    search: true
+
+  repo-url: https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook
+  repo-actions: [issue]
+
+bibliography: assets/references/references.bib
+csl: assets/references/apa.csl
+
+execute:
+  freeze: auto
+  warning: false
+  message: false
+
+format:
+  html:
+    theme:
+      - brand
+      - assets/styles/custom.scss
+    toc: true
+    toc-depth: 5
+    number-sections: true
+    code-fold: true
+    code-tools: true
+
+  docx:
+    reference-doc: assets/branding/templates/IntersectCollab-reference-doc.docx
+    toc: true
+    number-sections: false
+    toc-depth: 2

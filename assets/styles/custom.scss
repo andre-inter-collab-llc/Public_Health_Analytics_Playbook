@@ -1,0 +1,66 @@
+/*-- scss:defaults --*/
+/*
+ * Burden to Budget Custom Styles
+ * Extends _brand.yml theme with additional customizations
+ */
+
+/*-- scss:rules --*/
+/* Callout box customizations */
+.callout-note {
+  border-left-color: var(--bs-primary);
+}
+
+.callout-tip {
+  border-left-color: var(--bs-secondary);
+}
+
+/* Table styling */
+table {
+  margin-bottom: 1.5rem;
+}
+
+th {
+  background-color: rgba(36, 148, 247, 0.1);
+}
+
+/* Code block styling */
+pre {
+  border-radius: 0.5rem;
+}
+
+/* Mermaid diagram containers */
+.mermaid {
+  margin: 1.5rem 0;
+}
+
+/* Dashboard embed containers */
+.dashboard-embed {
+  width: 100%;
+  min-height: 600px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+/* Map and visualization containers */
+.viz-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(36, 148, 247, 0.02);
+}
+
+/* Print-friendly adjustments */
+@media print {
+  .callout {
+    break-inside: avoid;
+  }
+
+  table {
+    break-inside: avoid;
+  }
+
+  .dashboard-embed {
+    display: none;
+  }
+}

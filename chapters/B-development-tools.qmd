@@ -1,0 +1,34 @@
+---
+title: "Development Tools"
+---
+
+# Development Tools
+
+::: {.callout-note title="Appendix Status"}
+This appendix documents the tools and technologies used to build this book. These tools are not the focus of the book's content; they are documented here for transparency and for contributors who wish to reproduce or extend the work.
+:::
+
+## Tools Used
+
+| Tool | Purpose |
+|:---|:---|
+| [Quarto](https://quarto.org/) | Reproducible document and book generation |
+| [R](https://www.r-project.org/) / [RStudio](https://posit.co/products/open-source/rstudio/) | Data analysis, visualization, and Shiny dashboards |
+| [Python](https://www.python.org/) | API access, data engineering, PDF extraction |
+| [VS Code](https://code.visualstudio.com/) | Primary editor for development |
+| [GitHub](https://github.com/) | Version control and publishing (GitHub Pages) |
+| [GitHub Copilot](https://github.com/features/copilot) | AI-assisted development |
+| [Mermaid](https://mermaid.js.org/) | Text-based diagrams for data flows and frameworks |
+| [Tableau Public](https://public.tableau.com/) | Interactive dashboard publishing |
+
+## Local Development
+
+To build this book locally:
+
+```bash
+# Render the book
+quarto render
+
+# Preview with live reload
+quarto preview
+```

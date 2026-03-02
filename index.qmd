@@ -1,0 +1,39 @@
+---
+title: "Public Health Analytics Playbook"
+subtitle: "Exploring Public Health Issues with Reproducible Code"
+---
+
+# Welcome {.unnumbered}
+
+**The Public Health Analytics Playbook** is a collection of data-driven analyses exploring real public health issues. Each chapter takes on a specific topic, pulls data from public sources, walks through the epidemiology, and provides reproducible R and Python code you can adapt for your own work.
+
+This is equal parts curiosity project and practical reference. The analyses are grounded in published data and official statistics. The code is designed to be copied, modified, and reused.
+
+::: {.callout-note title="About This Resource"}
+This playbook is a work in progress. New chapters are added as research is completed. Each chapter is self-contained: you can read them in any order, skip to whatever issue interests you, and pull code directly into your own projects.
+:::
+
+## What This Is
+
+Each chapter in the playbook follows a consistent pattern:
+
+- **The issue**: What is the public health problem, and why does it matter?
+- **The data**: Where does the evidence come from, and how do we access it programmatically?
+- **The analysis**: Reproducible code (R and/or Python) that explores the data, with narrative interpretation
+- **The visualizations**: Charts, maps, and tables that make patterns visible
+
+Some chapters may compare the same issue across jurisdictions (U.S. states, countries, tribal nations). Others may go deep on a single geography. The scope is flexible and issue-driven.
+
+## Who This Is For
+
+- **Epidemiologists and public health analysts** looking for reproducible examples they can adapt
+- **Data scientists** curious about public health data sources, APIs, and visualization
+- **Public health students** seeking applied analytics beyond textbook exercises
+- **Anyone** who wants to understand what the data actually shows about the health issues that shape our communities
+
+## Companion Projects
+
+This playbook is part of a suite of [Intersect Collaborations](https://www.intersectcollaborations.com/) resources:
+
+- [**Public Health Automation Clinic**](https://andre-inter-collab-llc.github.io/Public-Health-Automation-Clinic/): Practical automation solutions for public health workflows
+- [**Bridgeframe Toolkit**](https://andre-inter-collab-llc.github.io/Bridgeframe-Toolkit/): Bridging business analysis and public health terminology and practice

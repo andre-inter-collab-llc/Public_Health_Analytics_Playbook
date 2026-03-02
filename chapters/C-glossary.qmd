@@ -1,0 +1,107 @@
+---
+title: "Glossary"
+---
+
+# Glossary
+
+Key terms used throughout this book, organized alphabetically.
+
+## C
+
+CDC WONDER
+: Wide-ranging ONline Data for Epidemiologic Research. The primary federal system for querying mortality and other public health data from the National Vital Statistics System. Accessible at [wonder.cdc.gov](https://wonder.cdc.gov/).
+
+ClinicalTrials.gov
+: A database of privately and publicly funded clinical studies conducted around the world. Maintained by the National Library of Medicine (NLM), it registers trials on conditions including opioid use disorder treatments and harm reduction interventions. Accessible via a public v2 API at [clinicaltrials.gov](https://clinicaltrials.gov/).
+
+## D
+
+DALY (Disability-Adjusted Life Year)
+: A composite measure of disease burden combining years of life lost (YLLs) due to premature mortality with years lived with disability (YLDs). One DALY represents one lost year of healthy life.
+
+Data Sovereignty
+: The principle that data is subject to the laws and governance of the nation or community from which it originates. Particularly relevant for Indigenous data, where tribal nations assert authority over data collection, ownership, and use.
+
+Data Use Agreement (DUA)
+: A formal agreement governing the terms under which restricted datasets may be accessed and used, specifying permitted uses, security requirements, and reporting obligations.
+
+## E
+
+E-utilities (NCBI Entrez Programming Utilities)
+: A set of server-side programs providing a stable interface to the Entrez query and database system at the National Center for Biotechnology Information (NCBI). Used for programmatic access to PubMed and other NCBI databases. Documentation at [ncbi.nlm.nih.gov/books/NBK25501](https://www.ncbi.nlm.nih.gov/books/NBK25501/).
+
+Europe PMC
+: An open science platform that provides access to a worldwide collection of life science publications, including all PubMed content plus preprints, patents, and clinical guidelines. Offers a REST API for programmatic search and retrieval at [europepmc.org](https://europepmc.org/).
+
+## F
+
+Fentanyl
+: A synthetic opioid 50 to 100 times more potent than morphine. Illicitly manufactured fentanyl is the primary driver of drug overdose deaths in the United States since approximately 2013.
+
+## G
+
+Global Burden of Disease (GBD)
+: A comprehensive epidemiological study managed by the Institute for Health Metrics and Evaluation (IHME) that provides estimates for over 375 diseases and injuries across 204 countries.
+
+## H
+
+Health Expenditure
+: The total spending on health by all financing agents (government, private, out-of-pocket, external aid) within a jurisdiction.
+
+## I
+
+ICD-10
+: The International Classification of Diseases, 10th Revision. The standard diagnostic coding system used worldwide for mortality and morbidity classification.
+
+## M
+
+MOUD (Medications for Opioid Use Disorder)
+: Evidence-based pharmacological treatments for opioid use disorder, including buprenorphine, methadone, and naltrexone. Previously referred to as medication-assisted treatment (MAT).
+
+Morbidity
+: The state of having a disease or medical condition. Measured through incidence (new cases) and prevalence (existing cases) rates.
+
+Mortality Rate
+: The frequency of death in a defined population over a specified time period, typically expressed per 100,000 population.
+
+## N
+
+Naloxone
+: An opioid antagonist medication that rapidly reverses the effects of opioid overdose. Available as a nasal spray (Narcan) or injectable formulation. A core component of harm reduction strategies.
+
+NCD (Non-Communicable Disease)
+: Chronic diseases not transmitted from person to person, including cardiovascular disease, cancer, diabetes, and chronic respiratory disease.
+
+NIH RePORTER
+: Research Portfolio Online Reporting Tools. A searchable database of federally funded biomedical research projects maintained by the National Institutes of Health. Covers grants from NIH, CDC, FDA, AHRQ, SAMHSA, and other HHS agencies. Accessible via a public API at [reporter.nih.gov](https://reporter.nih.gov/).
+
+## O
+
+OData
+: Open Data Protocol. A REST-based data access protocol used by WHO Global Health Observatory and other data portals for programmatic querying.
+
+## P
+
+PubMed
+: A free search engine maintained by the National Library of Medicine (NLM) that indexes over 37 million citations and abstracts of biomedical literature. The primary resource for searching peer-reviewed public health and medical research. Accessible at [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov/).
+
+## S
+
+Socrata
+: A data platform used by many U.S. state and local governments to host open data portals with built-in API access.
+
+SUDORS (State Unintentional Drug Overdose Reporting System)
+: A CDC surveillance system that collects detailed toxicological and death scene information on unintentional and undetermined-intent drug overdose deaths, providing more substance-specific detail than death certificates alone.
+
+## V
+
+VSRR (Vital Statistics Rapid Release)
+: A CDC program that publishes provisional mortality data, including monthly drug overdose death counts, before finalized annual data are available.
+
+## Y
+
+YLD (Years Lived with Disability)
+: The number of years lived in less than ideal health, weighted by the severity of the disability.
+
+YLL (Years of Life Lost)
+: The number of years of potential life lost due to premature death, calculated from a reference life expectancy.
