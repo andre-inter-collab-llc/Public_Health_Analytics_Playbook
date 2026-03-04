@@ -1,40 +1,37 @@
 ---
 title: "The U.S. Drug Overdose Crisis"
-author: "Your Name"
+author: "André van Zyl, MPH"
 ---
 
 # The U.S. Drug Overdose Crisis
 
-The United States is an outlier among high-income nations in one striking respect: unintentional injuries rank as the third leading cause of death, driven overwhelmingly by drug overdoses [@cdc_faststats]. In the most recent finalized data, unintentional injuries accounted for over 222,000 deaths annually [@cdc_faststats]. The primary driver is synthetic opioids, particularly illicitly manufactured fentanyl, which has transformed what began as a prescription opioid problem into a mass-casualty poisoning event.
+The United States stands alone among high-income nations in the scale of its overdose crisis. Drug overdoses claimed more than 100,000 lives for a third consecutive year in 2023, representing over a 50 percent increase since 2019 [@commonwealth_overdose_intl]. With an overdose rate of 324 deaths per million people (nearly 108,000 deaths in 2022), the U.S. has by far the highest overdose death rate in the world. While Scotland and Canada, the next highest-ranked countries, saw declines from 2021 to 2022, rates in the U.S. have remained persistently elevated [@commonwealth_overdose_intl].
 
-No peer nation experiences anything comparable. The [CDC National Center for Health Statistics](https://www.cdc.gov/nchs/fastats/leading-causes-of-death.htm) ranks unintentional injuries (driven by overdoses) as the third leading cause of death in the United States, behind heart disease and cancer [@cdc_faststats]. The [Commonwealth Fund 2025 Scorecard on State Health System Performance](https://www.commonwealthfund.org/publications/scorecard/2025/jun/2025-scorecard-state-health-system-performance) highlights that premature, avoidable deaths are increasing in the United States while declining in comparable high-income countries, with drug overdose a major contributor to this divergence [@commonwealth2025].
+According to the [CDC National Center for Health Statistics](https://www.cdc.gov/nchs/fastats/leading-causes-of-death.htm), the three leading causes of death in the U.S. are heart disease (680,981 deaths), cancer (613,352), and unintentional injuries (222,698), with drug poisonings dominating the latter category [@cdc_faststats]. Drug overdose has become a [leading cause of injury mortality](https://www.cdc.gov/nchs/hus/topics/drug-overdose-deaths.htm), with opioids driving an increasing share of these deaths since 2009 and accounting for over 70% of all overdose fatalities [@cdc_hus_overdose]. The growing involvement of stimulants such as cocaine and methamphetamine alongside opioids has further complicated the crisis, transforming what began as a prescription opioid problem into a polysubstance mass-casualty event.
+
+No peer nation experiences anything comparable. The [Commonwealth Fund 2025 Scorecard on State Health System Performance](https://www.commonwealthfund.org/publications/scorecard/2025/jun/2025-scorecard-state-health-system-performance) documents that premature, avoidable deaths are increasing in the United States while declining in comparable high-income countries, with drug overdose a major contributor to this divergence [@commonwealth2025]. The rate of avoidable mortality in West Virginia is more than twice the rate in Massachusetts, and wide racial disparities in premature deaths are the norm in most states [@commonwealth2025]. While overdose deaths fell slightly between 2022 and 2023 in 37 states, the total remains above 100,000 annually, and rates spiked by 25% or more in Nevada, Oregon, Washington, and Alaska [@commonwealth2025].
 
 This chapter explores what the data shows, where the crisis hits hardest, and how to access and analyze the underlying datasets and research literature programmatically.
 
+## Why This Chapter
+
+My path to this topic stems from my educational background and professional experience. I studied psychology and counseling in South Africa, where I worked as a supportive counselor at a residential recovery center for people with substance use disorders. That experience gave me a ground-level understanding of addiction, recovery, and the human cost of substance-related harm.
+
+When I moved to the United States, I helped with the development of COVID-19 contact tracing systems before joining a local health department as an epidemiologist, where my responsibilities included drug overdose mortality monitoring and surveillance. I worked with county-level data coming from different jurisdictions, most of which was not programmatically accessible. After working at the health department, I continued at the CDC on COVID-19 response work and then antimicrobial resistance (AMR) response, but the opioid epidemic never left my peripheral vision.
+
+Now, with more capacity to investigate, I am returning to the overdose landscape with fresh analytical tools and a broader perspective. As the published literature documents, the scale of drug overdose mortality in the United States is without parallel among high-income nations [@commonwealth2025]. This chapter is my attempt to understand the current state of the crisis: to see what data is available, to assess the impact and scale, to trace where funding is flowing, to examine what interventions are being tried, and to survey the research being conducted in the field.
+
 ## The Scale of the Problem
 
-Drug overdose deaths in the United States have followed a steep, accelerating trajectory over the past two decades. The crisis is commonly described in three waves:
+Drug overdose deaths in the United States have followed a steep, accelerating trajectory over the past 25 years. Approximately 105,000 people died from drug overdose in 2023, with nearly 80,000 (76%) of those deaths involving opioids. The number of opioid overdose deaths in 2023 was nearly ten times the number in 1999, though 2023 marked the first annual decline since 2018 [@cdc_opioid_epidemic]. From 1999 to 2023, approximately 806,000 people died from an opioid overdose in the United States [@cdc_opioid_epidemic].
 
-1. **Wave 1 (1990s)**: Prescription opioid deaths rise, driven by aggressive marketing of OxyContin and similar drugs
-2. **Wave 2 (2010s)**: Heroin deaths surge as prescription access tightens and users shift to cheaper alternatives
-3. **Wave 3 (2013 onward)**: Synthetic opioids, primarily illicitly manufactured fentanyl, overwhelm the death toll
+The [CDC describes three distinct waves](https://www.cdc.gov/overdose-prevention/about/understanding-the-opioid-overdose-epidemic.html) of opioid overdose deaths [@cdc_opioid_epidemic]:
 
-The third wave is the dominant driver today. Fentanyl is 50 to 100 times more potent than morphine, is inexpensive to manufacture, and is increasingly found mixed into non-opioid drug supplies (cocaine, methamphetamine, counterfeit pills), catching users unaware.
+1. **Wave 1 (1990s)**: Increased prescribing of opioids drove a rise in overdose deaths involving prescription opioids (natural and semi-synthetic opioids and methadone) starting around 1999, though these have declined in recent years
+2. **Wave 2 (2010)**: Rapid increases in overdose deaths involving heroin began in 2010, though heroin overdose deaths have also been declining in recent years
+3. **Wave 3 (2013 onward)**: Substantial increases in overdose deaths involving synthetic opioids, particularly illegally manufactured fentanyls (IMFs), which have largely saturated the illegal drug supply
 
-## State-Level Variation
-
-The overdose crisis does not hit uniformly. State-level overdose death rates in 2023 reveal dramatic geographic variation:
-
-| State | Drug Overdose Death Rate (per 100,000) | Context |
-|:---|---:|:---|
-| New Mexico | 48.9 | Highest in the Four Corners region |
-| Colorado | 30.6 | Acute crisis among people experiencing homelessness |
-| Utah | 21.4 | Lower rate, but rising |
-| National average | ~33 | Approximate |
-
-New Mexico's rate (48.9 per 100,000) is among the highest in the nation and more than double Utah's rate, despite the states sharing a border. These disparities reflect differences in drug supply routes, poverty concentration, rural healthcare access, and harm reduction infrastructure. [America's Health Rankings](https://www.americashealthrankings.org/) provides additional state-level context: Utah ranks among the healthiest states overall but faces an anomalous suicide crisis, while Colorado's [2025 Death Review](https://www.coloradocoalition.org/sites/default/files/2025-12/2025%20Death%20Review_Final.pdf) by the Colorado Coalition for the Homeless found that drug overdoses account for 77% of deaths among people experiencing homelessness in Denver.
-
-The [Colorado Consortium for Prescription Drug Abuse Prevention](https://corxconsortium.org/data/) maintains detailed data on the state's overdose landscape, including toxicological detail from the State Unintentional Drug Overdose Reporting System (SUDORS).
+The third wave remains the dominant driver. IMFs are found in powder form or pressed into counterfeit pills and frequently contain other drugs, including non-opioid sedatives such as xylazine [@cdc_opioid_epidemic]. From 2022 to 2023, the rate of overdose deaths involving synthetic opioids decreased approximately 2%, heroin deaths decreased roughly 33%, and prescription opioid deaths decreased nearly 12% [@cdc_opioid_epidemic]. Despite these declines, in 2023, nearly 47% of drug overdose deaths involved both opioids and stimulants, underscoring the polysubstance nature of the current crisis [@cdc_opioid_epidemic]. Data from the [SUDORS Dashboard](https://www.cdc.gov/overdose-prevention/data-research/facts-stats/sudors-dashboard-fatal-overdose-data.html) further confirms this pattern: in 2024, 73.4% of overdose deaths involved at least one opioid and 65.1% involved at least one stimulant [@cdc_sudors]. Critically, 67.5% of overdose deaths had at least one potential opportunity for intervention, and in 2022, 77% of adults with substance use disorder were not receiving treatment [@commonwealth2025].
 
 ## Data Sources
 
@@ -56,11 +53,9 @@ CDC WONDER suppresses counts below 10 deaths in any given cell to prevent identi
 
 CDC publishes several overdose-specific datasets on its open data portal at [data.cdc.gov](https://data.cdc.gov/), including provisional drug overdose death counts updated monthly. These datasets are Socrata-hosted and accessible via API.
 
-### State-Level Portals
+### State and Local Portals
 
-- **Colorado**: [CDPHE Open Data Portal](https://data.colorado.gov/) (Socrata), plus the State Unintentional Drug Overdose Reporting System (SUDORS) for toxicological detail
-- **New Mexico**: [NM-IBIS](https://ibis.doh.nm.gov/) query system for death certificate data and emergency department visits
-- **Utah**: [Utah Open Data Catalog](https://opendata.utah.gov/) (Socrata)
+Many states and local jurisdictions maintain their own open data portals with overdose-related datasets, often including more granular geographic or toxicological detail than federal sources. These vary in format, update frequency, and accessibility, but are worth exploring for jurisdiction-specific analyses.
 
 ## Accessing the Data with R
 
@@ -107,15 +102,30 @@ Provisional counts are often lower than final counts due to reporting delays. Th
 The following code demonstrates how to pull this dataset from CDC's Socrata-hosted open data portal.
 
 ```{r}
-#| label: cdc-overdose-data
-#| eval: true
-#| code-fold: true
+#| label: setup
+#| include: false
 
+# Load all libraries upfront so they remain available even when
+# downstream data-fetching chunks are loaded from knitr cache
+# (cached chunks do not re-execute library() calls).
 library(httr2)
 library(jsonlite)
 library(dplyr)
 library(ggplot2)
 library(plotly)
+library(DT)
+library(tidytext)
+library(ggwordcloud)
+library(tidyr)
+library(knitr)
+```
+
+```{r}
+#| label: cdc-overdose-data
+#| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
+#| code-fold: true
 
 # CDC provisional drug overdose death counts (Socrata endpoint)
 # Dataset: VSRR Provisional Drug Overdose Death Counts
@@ -137,13 +147,13 @@ overdose_raw <- response |>
   resp_body_json(simplifyVector = TRUE)
 ```
 
-The query returned **`r nrow(overdose_raw)`** rows covering **`r n_distinct(overdose_raw$state_name)`** jurisdictions.
+The query returned **`r nrow(overdose_raw)`** rows covering **`r length(unique(overdose_raw$state_name))`** jurisdictions.
 
 ::: {.callout-tip title="Reproducibility"}
 The Socrata API does not require authentication for public datasets. The dataset identifier `xkb8-kh2a` is stable. You can also download the full dataset as CSV from the [dataset page](https://data.cdc.gov/NCHS/VSRR-Provisional-Drug-Overdose-Death-Counts/xkb8-kh2a). For full methodology, including the statistical models used to generate predicted counts and the data quality thresholds applied to each jurisdiction, see the [Technical Notes](https://www.cdc.gov/nchs/nvss/vsrr/drug-overdose-data.htm).
 :::
 
-### Interactive Time Series: Drug Overdose Deaths by Jurisdiction
+#### Interactive Time Series: Drug Overdose Deaths by Jurisdiction
 
 The plot below shows 12-month ending provisional drug overdose death counts for the United States and every reporting state. Use the legend to toggle individual jurisdictions on or off, hover over data points for exact counts, and use the range slider to zoom into specific time periods.
 
@@ -239,65 +249,65 @@ p <- p |>
 p
 ```
 
-## State Comparisons: Four Corners
+#### Overdose Data Detail
 
-The Four Corners states (Arizona, Colorado, New Mexico, Utah) present a natural comparison group: geographically contiguous, but with very different overdose profiles. We can use the same CDC dataset to compare state-level trends.
+The table below lists the full CDC provisional overdose dataset. Use the filters to explore specific states, years, or months.
 
 ```{r}
-#| label: four-corners-comparison
-#| eval: false
-#| code-fold: false
+#| label: overdose-data-table
+#| eval: true
+#| code-fold: true
 
-# Filter for Four Corners states
-four_corners <- c("Arizona", "Colorado", "New Mexico", "Utah")
+library(DT)
 
-fc_response <- request(cdc_url) |>
-  req_url_query(
-    `$where`  = paste0(
-      "state_name in('", paste(four_corners, collapse = "','"), "')",
-      " AND indicator = 'Number of Drug Overdose Deaths'"
-    ),
-    `$limit`  = 5000,
-    `$order`  = "year DESC, month DESC"
-  ) |>
-  req_perform()
-
-fc_data <- fc_response |>
-  resp_body_json(simplifyVector = TRUE) |>
+overdose_raw |>
   mutate(
     data_value = as.numeric(data_value),
-    period = paste(year, month, sep = "-")
-  )
-
-# Plot: overdose death trends by state
-ggplot(fc_data, aes(x = period, y = data_value, color = state_name, group = state_name)) +
-  geom_line() +
-  labs(
-    title = "Drug Overdose Deaths: Four Corners States",
-    x = "Period",
-    y = "Deaths (12-month rolling count)",
-    color = "State"
-  ) +
-  theme_minimal()
+    predicted_value = as.numeric(predicted_value),
+    percent_complete = as.numeric(percent_complete)
+  ) |>
+  select(
+    `State Name` = state_name, Year = year, Month = month,
+    `Reported Deaths` = data_value, `Predicted Deaths` = predicted_value,
+    `% Complete` = percent_complete
+  ) |>
+  datatable(
+    caption = "CDC VSRR Provisional Drug Overdose Death Counts",
+    filter = "top",
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      order = list(list(1, "asc"), list(2, "desc"))
+    ),
+    rownames = FALSE
+  ) |>
+  formatRound(c("Reported Deaths", "Predicted Deaths"), digits = 0) |>
+  formatRound("% Complete", digits = 1)
 ```
 
 ## What the Interventions Look Like
 
 Public health responses to the overdose crisis operate at multiple levels:
 
-**Harm reduction**: Expanding naloxone distribution (the opioid reversal drug), establishing syringe services programs, and drug checking services [@cdc_overdose_prevention]. Colorado has enacted harm reduction legislation expanding naloxone access via standing orders through pharmacies [@colorado_harm_reduction]. New Mexico operates state-funded harm reduction programs focused on overdose death reduction and participant education [@nmdoh_harm_reduction].
+**Harm reduction**: Expanding naloxone distribution (the opioid reversal drug), establishing syringe services programs, and drug checking services [@cdc_overdose_prevention]. Colorado has enacted harm reduction legislation expanding naloxone access via standing orders through pharmacies; the [Colorado Consortium for Prescription Drug Abuse Prevention](https://corxconsortium.org/data/) tracks the state's comprehensive response [@corxconsortium]. New Mexico operates state-funded [harm reduction programs](https://www.nmhealth.org/about/phd/idb/hrp/) focused on overdose death reduction, overdose prevention training, naloxone distribution, and participant education [@nmdoh_harm_reduction].
 
-**Treatment access**: Increasing access to medications for opioid use disorder (MOUD), including buprenorphine, methadone, and naltrexone [@cdc_overdose_prevention]. Federal funding through State Opioid Response (SOR) grants ($1.48 billion nationally) and Tribal Opioid Response grants (~$63 million) support these efforts [@hhs_sor_grants].
+**Treatment access**: Increasing access to medications for opioid use disorder (MOUD), including buprenorphine, methadone, and naltrexone [@cdc_overdose_prevention]. Federal funding through State Opioid Response (SOR) grants ($1.48 billion nationally) and Tribal Opioid Response grants (~$63 million) have supported state and local treatment programs. However, the reduced footprint of the Substance Abuse and Mental Health Services Administration (SAMHSA) and the loss of roughly $11 billion in grants that had been supporting state and local substance use treatment programs threaten to reverse recent progress [@commonwealth2025].
 
 **Surveillance**: Enhanced death investigation through SUDORS (State Unintentional Drug Overdose Reporting System) provides toxicological detail beyond what death certificates capture, revealing which specific substances are involved [@cdc_sudors].
 
 ## Federal Funding
 
-Opioid response funding flows through several federal mechanisms. The [USAspending API](https://api.usaspending.gov/) enables programmatic tracking of these allocations:
+Opioid response funding flows through several federal mechanisms.
+
+### USAspending
+
+The [USAspending API](https://api.usaspending.gov/) enables programmatic tracking of federal grant allocations related to the opioid crisis:
 
 ```{r}
 #| label: usaspending-opioid
 #| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
 #| code-fold: true
 
 # Query USAspending for opioid-related grants
@@ -331,10 +341,10 @@ request_body <- list(
   page = 1
 )
 
-# Paginate to collect up to 500 awards for word cloud analysis
+# Paginate to collect all available awards
 # USAspending API caps at 100 results per page
 all_results <- list()
-for (pg in 1:5) {
+for (pg in 1:100) {
   request_body$page <- pg
   spending_response <- request(usa_spending_url) |>
     req_body_json(request_body) |>
@@ -366,13 +376,6 @@ awards <- spending_data$results |>
   ) |>
   arrange(desc(award_amount))
 
-cat(
-  "Total matching awards:", spending_data$page_metadata$total, "\n",
-  "Awards retrieved:", nrow(awards), "\n",
-  "Total value of retrieved awards: $",
-  format(sum(awards$award_amount, na.rm = TRUE), big.mark = ","), "\n"
-)
-
 # Truncate descriptions to a readable length for the table
 awards <- awards |>
   mutate(
@@ -397,17 +400,20 @@ awards |>
   )
 ```
 
-### What Are These Awards Funding?
+The query returned **`r format(nrow(awards), big.mark = ",")`** awards, with a combined value of **$`r format(sum(awards$award_amount, na.rm = TRUE), big.mark = ",")`**.
 
-The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r nrow(awards)` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending.
+#### What Are These Awards Funding?
+
+The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r format(nrow(awards), big.mark = ",")` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending.
 
 ```{r}
 #| label: usaspending-wordcloud
 #| eval: true
 #| code-fold: true
-
-library(tidytext)
-library(wordcloud2)
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
 
 # Use the full (untruncated) descriptions from the API response
 full_descriptions <- spending_data$results$Description
@@ -417,7 +423,6 @@ word_counts <- tibble(text = full_descriptions) |>
   filter(!is.na(text), text != "") |>
   unnest_tokens(word, text) |>
   anti_join(stop_words, by = "word") |>
-  # Remove generic/uninformative terms and numbers
   filter(
     !word %in% c("award", "grant", "funding", "program", "provide",
                   "project", "based", "including", "support", "services",
@@ -429,21 +434,18 @@ word_counts <- tibble(text = full_descriptions) |>
   ) |>
   count(word, sort = TRUE)
 
-# Display word cloud using top 100 terms
-wordcloud2(
-  word_counts |> head(100),
-  size = 0.6,
-  color = rep_len(
-    c("#2494f7", "#00a4bb", "#01272f", "#204d70"),
-    100
-  ),
-  backgroundColor = "white",
-  fontFamily = "Inter",
-  shape = "circle"
-)
+ggplot(word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
 ```
 
-### Federal Funding Over Time
+#### Federal Funding Over Time
 
 The chart below plots individual grant award amounts by their start date, colored by awarding sub-agency. Hover over each point to see the recipient and award details.
 
@@ -516,6 +518,8 @@ funding_plot <- plot_ly(
 funding_plot
 ```
 
+#### Award Detail
+
 The table below lists all retrieved awards with full descriptions. Use the search box to filter by keyword and click column headers to sort.
 
 ```{r}
@@ -567,8 +571,9 @@ Beyond surveillance data, a large and growing body of peer-reviewed research exa
 
 ```{r}
 #| label: pubmed-search
-#| eval: false
-#| code-fold: false
+#| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
 
 library(httr2)
 library(jsonlite)
@@ -585,7 +590,7 @@ search_response <- request(esearch_url) |>
   req_url_query(
     db       = "pubmed",
     term     = "opioid overdose fentanyl United States[Title/Abstract]",
-    retmax   = 20,
+    retmax   = 10000,
     sort     = "date",
     retmode  = "json",
     mindate  = format(date_start, "%Y/%m/%d"),
@@ -599,8 +604,6 @@ search_results <- search_response |>
 
 # Extract PubMed IDs
 pmids <- search_results$esearchresult$idlist
-cat("Found", search_results$esearchresult$count, "articles.\n")
-cat("Retrieved", length(pmids), "PubMed IDs.\n")
 
 # Step 2: Fetch article summaries for those IDs
 esummary_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
@@ -632,9 +635,166 @@ if (length(pmids) > 0) {
     )
   }) |>
     bind_rows()
-
-  print(articles)
 }
+```
+
+The search matched **`r format(as.integer(search_results$esearchresult$count), big.mark = ",")`** articles. **`r nrow(articles)`** were retrieved for analysis.
+
+#### Publication Trends Over Time
+
+The chart below shows the volume of opioid overdose fentanyl research published over time. Each point represents the number of articles published in a given month.
+
+```{r}
+#| label: pubmed-timeline
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+library(lubridate)
+
+# Parse publication dates into proper Date objects
+# PubMed dates come in formats like "2025 Jan 15", "2025 Mar", "2025"
+pubmed_timeline <- articles |>
+  mutate(
+    pub_date_parsed = case_when(
+      grepl("^\\d{4} \\w+ \\d+", pub_date) ~
+        as.Date(pub_date, format = "%Y %b %d"),
+      grepl("^\\d{4} \\w+", pub_date) ~
+        as.Date(paste0(pub_date, " 01"), format = "%Y %b %d"),
+      grepl("^\\d{4}$", pub_date) ~
+        as.Date(paste0(pub_date, " Jan 01"), format = "%Y %b %d"),
+      TRUE ~ NA_Date_
+    ),
+    pub_month = floor_date(pub_date_parsed, "month")
+  ) |>
+  filter(!is.na(pub_month))
+
+# Count articles per month
+monthly_counts <- pubmed_timeline |>
+  count(pub_month, name = "n_articles") |>
+  arrange(pub_month)
+
+# Interactive time series
+pubmed_plot <- plot_ly(
+  data = monthly_counts,
+  x = ~pub_month,
+  y = ~n_articles,
+  type = "scatter",
+  mode = "lines+markers",
+  line = list(color = "#2494f7", width = 2),
+  marker = list(color = "#2494f7", size = 6),
+  hovertemplate = paste(
+    "<b>%{x|%B %Y}</b><br>",
+    "Articles: %{y}<extra></extra>"
+  )
+) |>
+  layout(
+    title = list(
+      text = "Opioid Overdose Fentanyl Research: Publications per Month",
+      font = list(size = 16)
+    ),
+    xaxis = list(
+      title = "Publication Month",
+      type = "date",
+      rangeslider = list(visible = TRUE)
+    ),
+    yaxis = list(
+      title = "Number of Articles"
+    ),
+    hovermode = "x unified"
+  ) |>
+  config(displayModeBar = TRUE)
+
+pubmed_plot
+```
+
+#### Research Themes in Article Titles
+
+The word cloud below visualizes the most frequent terms appearing in the titles of all `r nrow(articles)` retrieved PubMed articles. This provides a quick thematic overview of the research landscape.
+
+```{r}
+#| label: pubmed-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+# Tokenize article titles into individual words
+pubmed_title_words <- tibble(text = articles$title) |>
+  filter(!is.na(text), text != "") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "analysis", "among", "associated",
+                  "united", "states", "results", "based",
+                  "findings", "using", "related", "data"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(pubmed_title_words |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Publication Detail
+
+The table below lists all retrieved articles. Use the search box to filter by keyword, journal, or date, and click column headers to sort.
+
+```{r}
+#| label: pubmed-article-table
+#| eval: true
+#| code-fold: true
+
+library(DT)
+
+articles |>
+  mutate(
+    # Create clickable PubMed link
+    PMID = ifelse(
+      !is.na(pmid),
+      paste0('<a href="https://pubmed.ncbi.nlm.nih.gov/', pmid,
+             '/" target="_blank">', pmid, '</a>'),
+      pmid
+    ),
+    # Create clickable DOI link
+    DOI = ifelse(
+      !is.na(doi),
+      paste0('<a href="https://doi.org/', doi,
+             '" target="_blank">', doi, '</a>'),
+      ""
+    )
+  ) |>
+  select(
+    PMID, Title = title, Journal = journal,
+    `Publication Date` = pub_date, DOI
+  ) |>
+  datatable(
+    caption = paste0(
+      "PubMed: Opioid Overdose Fentanyl Research (",
+      format(date_start, "%Y"), "-", format(date_end, "%Y"), ")"
+    ),
+    filter = "top",
+    escape = FALSE,
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      order = list(list(3, "desc")),
+      columnDefs = list(
+        list(width = "400px", targets = 1)
+      )
+    ),
+    rownames = FALSE
+  )
 ```
 
 ::: {.callout-tip title="Reproducibility"}
@@ -647,60 +807,221 @@ For higher rate limits, register for a free NCBI API key at [ncbi.nlm.nih.gov/ac
 
 ```{r}
 #| label: nih-reporter-search
-#| eval: false
-#| code-fold: false
+#| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
+#| code-fold: true
 
 # NIH RePORTER API: find funded opioid overdose research projects
 # Documentation: https://api.reporter.nih.gov/
 
 reporter_url <- "https://api.reporter.nih.gov/v2/projects/search"
 
-reporter_body <- list(
-  criteria = list(
-    advanced_text_search = list(
-      operator = "and",
-      search_field = "projecttitle,terms",
-      search_text = "opioid overdose fentanyl"
+# Paginate to collect all available projects
+all_projects <- list()
+for (pg in 0:99) {
+  reporter_body <- list(
+    criteria = list(
+      advanced_text_search = list(
+        operator = "and",
+        search_field = "projecttitle,terms",
+        search_text = "opioid overdose fentanyl"
+      ),
+      fiscal_years = as.list((year_end - 4L):year_end),
+      exclude_subprojects = TRUE
     ),
-    fiscal_years = as.list((year_end - 2L):year_end),
-    exclude_subprojects = TRUE
-  ),
-  offset = 0,
-  limit = 25,
-  sort_field = "FiscalYear",
-  sort_order = "desc"
-)
+    offset = pg * 100,
+    limit = 100,
+    sort_field = "FiscalYear",
+    sort_order = "desc"
+  )
 
-reporter_response <- request(reporter_url) |>
-  req_body_json(reporter_body) |>
-  req_perform()
+  reporter_response <- request(reporter_url) |>
+    req_body_json(reporter_body) |>
+    req_perform()
 
-reporter_data <- reporter_response |>
-  resp_body_json()
+  reporter_data <- reporter_response |>
+    resp_body_json()
 
-cat("Total matching projects:", reporter_data$meta$total, "\n")
-
-# Parse results into a dataframe
-if (length(reporter_data$results) > 0) {
-  projects <- lapply(reporter_data$results, function(p) {
-    tibble(
-      project_num   = p$project_num %||% NA_character_,
-      fiscal_year   = p$fiscal_year %||% NA_integer_,
-      title         = p$project_title %||% NA_character_,
-      pi_name       = {
-        if (!is.null(p$principal_investigators) && length(p$principal_investigators) > 0)
-          p$principal_investigators[[1]]$full_name
-        else NA_character_
-      },
-      organization  = p$organization$org_name %||% NA_character_,
-      award_amount  = p$award_amount %||% NA_real_,
-      abstract_text = substr(p$abstract_text %||% "", 1, 200)
-    )
-  }) |>
-    bind_rows()
-
-  print(projects |> select(project_num, fiscal_year, title, award_amount))
+  if (length(reporter_data$results) == 0) break
+  all_projects[[pg + 1]] <- reporter_data$results
+  if (length(reporter_data$results) < 100) break
 }
+
+reporter_total <- reporter_data$meta$total
+
+# Parse all results into a dataframe
+projects <- lapply(unlist(all_projects, recursive = FALSE), function(p) {
+  tibble(
+    project_num   = p$project_num %||% NA_character_,
+    fiscal_year   = p$fiscal_year %||% NA_integer_,
+    title         = p$project_title %||% NA_character_,
+    pi_name       = {
+      if (!is.null(p$principal_investigators) && length(p$principal_investigators) > 0)
+        p$principal_investigators[[1]]$full_name
+      else NA_character_
+    },
+    organization  = p$organization$org_name %||% NA_character_,
+    award_amount  = p$award_amount %||% NA_real_,
+    abstract_text = p$abstract_text %||% NA_character_
+  )
+}) |>
+  bind_rows()
+```
+
+The search matched **`r format(reporter_total, big.mark = ",")`** projects. **`r format(nrow(projects), big.mark = ",")`** were retrieved, representing **$`r format(sum(projects$award_amount, na.rm = TRUE), big.mark = ",")`** in total funding.
+
+#### NIH Opioid Research Funding Over Time
+
+The chart below shows the distribution of NIH-funded opioid research project awards by fiscal year. Hover over each point to see the project title, PI, and award amount.
+
+```{r}
+#| label: nih-reporter-timeline
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+
+# Summarize funding by fiscal year
+nih_annual <- projects |>
+  filter(!is.na(award_amount), !is.na(fiscal_year)) |>
+  group_by(fiscal_year) |>
+  summarise(
+    total_funding = sum(award_amount, na.rm = TRUE),
+    n_projects = n(),
+    .groups = "drop"
+  ) |>
+  arrange(fiscal_year)
+
+nih_timeline_plot <- plot_ly() |>
+  add_trace(
+    data = nih_annual,
+    x = ~fiscal_year,
+    y = ~total_funding,
+    type = "bar",
+    marker = list(color = "#2494f7"),
+    text = ~paste0(
+      "<b>FY ", fiscal_year, "</b><br>",
+      "Projects: ", n_projects, "<br>",
+      "Total funding: $", formatC(total_funding, format = "f",
+                                   digits = 0, big.mark = ",")
+    ),
+    hoverinfo = "text"
+  ) |>
+  layout(
+    title = list(
+      text = "NIH Opioid Overdose Research Funding by Fiscal Year",
+      font = list(size = 16)
+    ),
+    xaxis = list(
+      title = "Fiscal Year",
+      dtick = 1
+    ),
+    yaxis = list(
+      title = "Total Award Amount ($)",
+      separatethousands = TRUE
+    ),
+    hovermode = "x unified"
+  ) |>
+  config(displayModeBar = TRUE)
+
+nih_timeline_plot
+```
+
+#### What Is NIH Funding?
+
+The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes.
+
+```{r}
+#| label: nih-reporter-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+# Tokenize abstracts into individual words, remove stop words and generic terms
+nih_word_counts <- tibble(text = projects$abstract_text) |>
+  filter(!is.na(text), text != "") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "research", "project", "aim", "aims",
+                  "specific", "propose", "proposed", "will", "use",
+                  "data", "based", "including", "provide", "develop",
+                  "support", "national", "health", "program", "grant",
+                  "funding", "abstract", "1", "2", "3", "4", "5",
+                  "r01", "r21", "r34", "k01", "k23", "u01", "p50"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(nih_word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Project Detail
+
+The table below lists all retrieved NIH-funded projects. Use the search box to filter by keyword, PI, organization, or fiscal year, and click column headers to sort.
+
+```{r}
+#| label: nih-reporter-table
+#| eval: true
+#| code-fold: true
+
+library(DT)
+
+projects |>
+  mutate(
+    # Create clickable link to NIH RePORTER project page
+    `Project Number` = ifelse(
+      !is.na(project_num),
+      paste0('<a href="https://reporter.nih.gov/project-details/',
+             gsub(" ", "", project_num),
+             '" target="_blank">', project_num, '</a>'),
+      project_num
+    ),
+    `Award Amount` = award_amount,
+    # Truncate abstracts for display
+    Abstract = ifelse(
+      !is.na(abstract_text) & nchar(abstract_text) > 200,
+      paste0(substr(abstract_text, 1, 200), "..."),
+      abstract_text
+    )
+  ) |>
+  select(
+    `Project Number`, `Fiscal Year` = fiscal_year,
+    Title = title, PI = pi_name,
+    Organization = organization, `Award Amount`, Abstract
+  ) |>
+  datatable(
+    caption = paste0(
+      "NIH-Funded Opioid Overdose Research Projects (",
+      year_end - 4, "-", year_end, ")"
+    ),
+    filter = "top",
+    escape = FALSE,
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      order = list(list(5, "desc")),
+      columnDefs = list(
+        list(width = "300px", targets = 2),
+        list(width = "300px", targets = 6)
+      )
+    ),
+    rownames = FALSE
+  ) |>
+  formatCurrency("Award Amount", digits = 0)
 ```
 
 ::: {.callout-note title="Data Source"}
@@ -713,50 +1034,185 @@ NIH RePORTER is the authoritative source for federally funded biomedical researc
 
 ```{r}
 #| label: europe-pmc-search
-#| eval: false
-#| code-fold: false
+#| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
+#| code-fold: true
 
-# Europe PMC REST API: search for open access opioid research
-# Documentation: https://europepmc.org/RestfulWebService
+# Paginate to collect all available results (pageSize max is 1000)
 
 epmc_url <- "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 
-epmc_response <- request(epmc_url) |>
-  req_url_query(
-    query      = paste0("(opioid overdose fentanyl) AND (PUB_YEAR:[",
-                        year_start, " TO ", year_end, "])"),
-    format     = "json",
-    pageSize   = 15,
-    sort       = "date",
-    resultType = "core"
-  ) |>
-  req_perform()
+epmc_all <- list()
+for (pg in 1:50) {
+  epmc_response <- request(epmc_url) |>
+    req_url_query(
+      query      = paste0("(opioid overdose fentanyl) AND (PUB_YEAR:[",
+                          year_start, " TO ", year_end, "])"),
+      format     = "json",
+      pageSize   = 1000,
+      cursorMark = if (pg == 1) "*" else epmc_cursor,
+      resultType = "core"
+    ) |>
+    req_perform()
 
-epmc_data <- epmc_response |>
-  resp_body_json()
+  epmc_data <- epmc_response |>
+    resp_body_json()
 
-cat("Total results:", epmc_data$hitCount, "\n")
-
-if (length(epmc_data$resultList$result) > 0) {
-  epmc_articles <- lapply(epmc_data$resultList$result, function(a) {
-    tibble(
-      pmid            = a$pmid %||% NA_character_,
-      title           = a$title %||% NA_character_,
-      journal         = a$journalTitle %||% NA_character_,
-      year            = a$pubYear %||% NA_character_,
-      is_open_access  = a$isOpenAccess %||% "N",
-      cited_by_count  = a$citedByCount %||% 0L,
-      doi             = a$doi %||% NA_character_
-    )
-  }) |>
-    bind_rows()
-
-  # Show most-cited open access articles
-  epmc_articles |>
-    filter(is_open_access == "Y") |>
-    arrange(desc(cited_by_count)) |>
-    print()
+  if (length(epmc_data$resultList$result) == 0) break
+  epmc_all[[pg]] <- epmc_data$resultList$result
+  epmc_cursor <- epmc_data$nextCursorMark %||% NULL
+  if (is.null(epmc_cursor) || length(epmc_data$resultList$result) < 1000) break
 }
+
+epmc_hit_count <- epmc_data$hitCount
+
+epmc_articles <- lapply(unlist(epmc_all, recursive = FALSE), function(a) {
+  tibble(
+    pmid            = a$pmid %||% NA_character_,
+    title           = a$title %||% NA_character_,
+    journal         = a$journalTitle %||% NA_character_,
+    year            = a$pubYear %||% NA_character_,
+    first_pub_date  = a$firstPublicationDate %||% NA_character_,
+    is_open_access  = a$isOpenAccess %||% "N",
+    cited_by_count  = a$citedByCount %||% 0L,
+    doi             = a$doi %||% NA_character_,
+    abstract        = a$abstractText %||% NA_character_
+  )
+}) |>
+  bind_rows()
+```
+
+The search matched **`r format(epmc_hit_count, big.mark = ",")`** results. **`r format(nrow(epmc_articles), big.mark = ",")`** articles were retrieved, of which **`r sum(epmc_articles$is_open_access == "Y", na.rm = TRUE)`** are open access.
+
+#### Europe PMC: Publication Timeline
+
+The chart below shows the volume of opioid overdose fentanyl research indexed in Europe PMC by publication year.
+
+```{r}
+#| label: europe-pmc-timeline
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+
+epmc_by_year <- epmc_articles |>
+  filter(!is.na(.data$year)) |>
+  mutate(pub_year = as.integer(.data$year)) |>
+  count(pub_year, name = "n_articles") |>
+  arrange(pub_year)
+
+epmc_timeline_plot <- plot_ly(
+  data = epmc_by_year,
+  x = ~pub_year,
+  y = ~n_articles,
+  type = "bar",
+  marker = list(color = "#00a4bb"),
+  text = ~paste0("<b>", pub_year, "</b><br>Articles: ", n_articles),
+  hoverinfo = "text"
+) |>
+  layout(
+    title = list(
+      text = "Europe PMC: Opioid Overdose Fentanyl Publications by Year",
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Publication Year", dtick = 1),
+    yaxis = list(title = "Number of Articles"),
+    hovermode = "x unified"
+  ) |>
+  config(displayModeBar = TRUE)
+
+epmc_timeline_plot
+```
+
+#### Europe PMC: Research Themes
+
+The word cloud below visualizes the most frequent terms in article titles and abstracts retrieved from Europe PMC.
+
+```{r}
+#| label: europe-pmc-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+epmc_word_counts <- epmc_articles |>
+  mutate(text = paste(title, abstract, sep = " ")) |>
+  select(text) |>
+  filter(!is.na(text), text != " ") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "results", "background", "methods",
+                  "conclusions", "objective", "purpose", "findings",
+                  "data", "based", "including", "conclusion",
+                  "aim", "abstract", "introduction"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(epmc_word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Europe PMC: Article Detail
+
+The table below lists all retrieved articles. Use the search box to filter by keyword, journal, year, or open access status.
+
+```{r}
+#| label: europe-pmc-table
+#| eval: true
+#| code-fold: true
+
+library(DT)
+
+epmc_articles |>
+  mutate(
+    PMID = ifelse(
+      !is.na(pmid),
+      paste0('<a href="https://europepmc.org/article/med/', pmid,
+             '" target="_blank">', pmid, '</a>'),
+      ""
+    ),
+    DOI = ifelse(
+      !is.na(doi),
+      paste0('<a href="https://doi.org/', doi,
+             '" target="_blank">', doi, '</a>'),
+      ""
+    ),
+    `Open Access` = ifelse(is_open_access == "Y", "Yes", "No")
+  ) |>
+  select(
+    PMID, Title = title, Journal = journal,
+    Year = year, `Open Access`, `Cited By` = cited_by_count, DOI
+  ) |>
+  datatable(
+    caption = paste0(
+      "Europe PMC: Opioid Overdose Fentanyl Research (",
+      year_start, "-", year_end, ")"
+    ),
+    filter = "top",
+    escape = FALSE,
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      order = list(list(5, "desc")),
+      columnDefs = list(
+        list(width = "400px", targets = 1)
+      )
+    ),
+    rownames = FALSE
+  )
 ```
 
 ### ClinicalTrials.gov (Clinical Research)
@@ -765,78 +1221,217 @@ if (length(epmc_data$resultList$result) > 0) {
 
 ```{r}
 #| label: clinicaltrials-search
-#| eval: false
-#| code-fold: false
+#| eval: true
+#| cache: true
+#| cache.extra: !expr Sys.Date()
+#| code-fold: true
 
 # ClinicalTrials.gov v2 API: find opioid-related clinical trials
 # Documentation: https://clinicaltrials.gov/data-api/about-api
+# Paginate using nextPageToken to collect up to ~200 trials
 
 ct_url <- "https://clinicaltrials.gov/api/v2/studies"
 
-ct_response <- request(ct_url) |>
-  req_url_query(
+all_trials_raw <- list()
+next_token <- NULL
+for (pg in 1:10) {
+  ct_query <- list(
     `query.cond`  = "opioid overdose",
     `query.intr`  = "fentanyl OR naloxone OR buprenorphine",
     `filter.overallStatus` = "RECRUITING,ACTIVE_NOT_RECRUITING,COMPLETED",
-    pageSize      = 15,
-    sort          = "LastUpdatePostDate:desc",
-    fields        = "NCTId,BriefTitle,OverallStatus,StartDate,CompletionDate,LeadSponsorName,EnrollmentCount"
-  ) |>
-  req_perform()
+    countTotal    = "true",
+    pageSize      = 100,
+    sort          = "LastUpdatePostDate:desc"
+  )
+  if (!is.null(next_token)) ct_query$pageToken <- next_token
 
-ct_data <- ct_response |>
-  resp_body_json()
+  ct_response <- request(ct_url) |>
+    req_url_query(!!!ct_query) |>
+    req_perform()
 
-cat("Total studies found:", ct_data$totalCount, "\n")
+  ct_data <- ct_response |>
+    resp_body_json()
 
-if (length(ct_data$studies) > 0) {
-  trials <- lapply(ct_data$studies, function(s) {
-    proto <- s$protocolSection
-    id_mod <- proto$identificationModule
-    status_mod <- proto$statusModule
-    sponsor_mod <- proto$sponsorCollaboratorsModule
-    design_mod <- proto$designModule
-
-    tibble(
-      nct_id     = id_mod$nctId %||% NA_character_,
-      title      = id_mod$briefTitle %||% NA_character_,
-      status     = status_mod$overallStatus %||% NA_character_,
-      start_date = status_mod$startDateStruct$date %||% NA_character_,
-      sponsor    = sponsor_mod$leadSponsor$name %||% NA_character_,
-      enrollment = design_mod$enrollmentInfo$count %||% NA_integer_
-    )
-  }) |>
-    bind_rows()
-
-  print(trials)
+  if (length(ct_data$studies) == 0) break
+  all_trials_raw[[pg]] <- ct_data$studies
+  next_token <- ct_data$nextPageToken
+  if (is.null(next_token)) break
 }
+
+ct_total <- ct_data$totalCount
+
+trials <- lapply(unlist(all_trials_raw, recursive = FALSE), function(s) {
+  proto <- s$protocolSection
+  id_mod <- proto$identificationModule
+  status_mod <- proto$statusModule
+  sponsor_mod <- proto$sponsorCollaboratorsModule
+  design_mod <- proto$designModule
+  desc_mod <- proto$descriptionModule
+
+  tibble(
+    nct_id      = id_mod$nctId %||% NA_character_,
+    title       = id_mod$briefTitle %||% NA_character_,
+    status      = status_mod$overallStatus %||% NA_character_,
+    start_date  = status_mod$startDateStruct$date %||% NA_character_,
+    sponsor     = sponsor_mod$leadSponsor$name %||% NA_character_,
+    enrollment  = design_mod$enrollmentInfo$count %||% NA_integer_,
+    description = desc_mod$briefSummary %||% NA_character_
+  )
+}) |>
+  bind_rows()
+```
+
+The search matched **`r format(ct_total, big.mark = ",")`** studies. **`r nrow(trials)`** trials were retrieved for analysis.
+
+#### Clinical Trials Over Time
+
+The chart below shows the number of opioid-related clinical trials by their start year, broken down by status.
+
+```{r}
+#| label: clinicaltrials-timeline
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+
+trials_timeline <- trials |>
+  mutate(
+    start_year = as.integer(substr(start_date, 1, 4))
+  ) |>
+  filter(!is.na(start_year)) |>
+  count(start_year, status, name = "n_trials") |>
+  arrange(start_year)
+
+# Brand-aligned status colors
+status_colors <- c(
+  "COMPLETED" = "#2494f7",
+  "ACTIVE_NOT_RECRUITING" = "#00a4bb",
+  "RECRUITING" = "#204d70"
+)
+
+ct_timeline_plot <- plot_ly(
+  data = trials_timeline,
+  x = ~start_year,
+  y = ~n_trials,
+  color = ~status,
+  colors = status_colors,
+  type = "bar",
+  text = ~paste0(
+    "<b>", start_year, "</b><br>",
+    status, ": ", n_trials, " trials"
+  ),
+  hoverinfo = "text"
+) |>
+  layout(
+    title = list(
+      text = "Opioid-Related Clinical Trials by Start Year and Status",
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Start Year", dtick = 1),
+    yaxis = list(title = "Number of Trials"),
+    barmode = "stack",
+    legend = list(
+      title = list(text = "Trial Status"),
+      orientation = "h",
+      y = -0.2, x = 0
+    ),
+    hovermode = "x unified"
+  ) |>
+  config(displayModeBar = TRUE)
+
+ct_timeline_plot
+```
+
+#### Clinical Trial Research Themes
+
+The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research.
+
+```{r}
+#| label: clinicaltrials-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+ct_word_counts <- trials |>
+  mutate(text = paste(title, description, sep = " ")) |>
+  select(text) |>
+  filter(!is.na(text), text != " ") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "trial", "clinical", "phase",
+                  "participants", "purpose", "determine",
+                  "evaluate", "assess", "including", "based",
+                  "aims", "aim", "objective", "primary"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(ct_word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Clinical Trial Detail
+
+The table below lists all retrieved clinical trials. Use the filters to explore by status, sponsor, or keyword.
+
+```{r}
+#| label: clinicaltrials-table
+#| eval: true
+#| code-fold: true
+
+library(DT)
+
+trials |>
+  mutate(
+    `NCT ID` = ifelse(
+      !is.na(nct_id),
+      paste0('<a href="https://clinicaltrials.gov/study/',
+             nct_id, '" target="_blank">', nct_id, '</a>'),
+      nct_id
+    ),
+    # Truncate descriptions for display
+    Description = ifelse(
+      !is.na(description) & nchar(description) > 200,
+      paste0(substr(description, 1, 200), "..."),
+      description
+    )
+  ) |>
+  select(
+    `NCT ID`, Title = title, Status = status,
+    `Start Date` = start_date, Sponsor = sponsor,
+    Enrollment = enrollment, Description
+  ) |>
+  datatable(
+    caption = "ClinicalTrials.gov: Opioid Overdose Intervention Trials",
+    filter = "top",
+    escape = FALSE,
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      order = list(list(3, "desc")),
+      columnDefs = list(
+        list(width = "300px", targets = 1),
+        list(width = "300px", targets = 6)
+      )
+    ),
+    rownames = FALSE
+  )
 ```
 
 ::: {.callout-tip title="Reproducibility"}
 ClinicalTrials.gov does not require authentication. The v2 API returns JSON by default and supports filtering by condition, intervention, status, location, and date range. This is useful for mapping the research landscape around specific interventions (e.g., naloxone distribution, buprenorphine access).
 :::
-
-### Global Burden of Disease (GBD) Results Tool
-
-The [IHME GBD Results Tool](https://vizhub.healthdata.org/gbd-results/) provides modeled estimates for drug use disorders as a specific cause of death and disability across 204 countries. This is the authoritative source for comparing the U.S. overdose burden against other nations using standardized DALY, YLL, and YLD metrics. Data can be exported as CSV after creating a free account at [healthdata.org](https://www.healthdata.org/research-analysis/gbd-data).
-
-::: {.callout-note title="Data Source"}
-The GBD study models both fatal and non-fatal outcomes of drug use disorders, enabling analysis that goes beyond death counts. This captures the full burden, including years lived with disability from substance use disorders, which is not available in vital statistics data alone.
-:::
-
-## Questions for Further Analysis
-
-This chapter provides the starting framework. Future iterations could explore:
-
-- **Trend analysis**: How have overdose death rates changed year-over-year by state and by substance type?
-- **Demographic patterns**: Which age groups, races, and urban/rural classifications bear the highest burden?
-- **Supply vs. demand**: How do geographic overdose patterns correlate with drug trafficking routes?
-- **Spending alignment**: Do states with higher overdose rates receive proportionally more federal prevention funding?
-- **County-level mapping**: Where within states are deaths concentrated?
-
-- **Research landscape**: What does the peer-reviewed literature reveal about effective interventions? Which NIH-funded projects are producing results?
-- **International comparison**: How does the U.S. drug use disorder DALY rate compare against peer nations using GBD estimates?
-
-Each of these questions is answerable with publicly available data, research databases, and the analytical patterns demonstrated above.
 
 # References
