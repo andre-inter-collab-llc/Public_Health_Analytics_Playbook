@@ -404,7 +404,7 @@ The query returned **`r format(nrow(awards), big.mark = ",")`** awards, with a c
 
 #### What Are These Awards Funding?
 
-The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r format(nrow(awards), big.mark = ",")` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending.
+The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r format(nrow(awards), big.mark = ",")` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending. Try searching for any of these keywords in the Award Detail table below to explore the specific grants behind each theme.
 
 ```{r}
 #| label: usaspending-wordcloud
@@ -511,7 +511,8 @@ funding_plot <- plot_ly(
       font = list(size = 9)
     ),
     hovermode = "closest",
-    margin = list(b = 120)
+    margin = list(b = 120),
+    height = 800
   ) |>
   config(displayModeBar = TRUE)
 
@@ -535,7 +536,7 @@ awards |>
     `Award Amount` = as.numeric(`Award Amount`)
   ) |>
   select(
-    `Awarding Sub Agency`, `Recipient Name`, `Award Amount`,
+    Award, `Awarding Sub Agency`, `Recipient Name`, `Award Amount`,
     `Start Date`, Description
   ) |>
   arrange(desc(`Award Amount`)) |>
@@ -543,12 +544,13 @@ awards |>
     caption = paste0("Opioid-Related Federal Grant Awards (",
                      year_start, "-", year_end, ")"),
     filter = "top",
+    escape = FALSE,
     options = list(
       pageLength = 10,
       scrollX = TRUE,
-      order = list(list(2, "desc")),
+      order = list(list(3, "desc")),
       columnDefs = list(
-        list(width = "300px", targets = 4)
+        list(width = "300px", targets = 5)
       )
     ),
     rownames = FALSE
@@ -710,7 +712,7 @@ pubmed_plot
 
 #### Research Themes in Article Titles
 
-The word cloud below visualizes the most frequent terms appearing in the titles of all `r nrow(articles)` retrieved PubMed articles. This provides a quick thematic overview of the research landscape.
+The word cloud below visualizes the most frequent terms appearing in the titles of all `r nrow(articles)` retrieved PubMed articles. This provides a quick thematic overview of the research landscape. Try searching for any of these keywords in the Publication Detail table below to find the specific articles behind each theme.
 
 ```{r}
 #| label: pubmed-wordcloud
@@ -930,7 +932,7 @@ nih_timeline_plot
 
 #### What Is NIH Funding?
 
-The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes.
+The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes. Try searching for any of these keywords in the Project Detail table below to explore the specific grants behind each theme.
 
 ```{r}
 #| label: nih-reporter-wordcloud
@@ -1127,7 +1129,7 @@ epmc_timeline_plot
 
 #### Europe PMC: Research Themes
 
-The word cloud below visualizes the most frequent terms in article titles and abstracts retrieved from Europe PMC.
+The word cloud below visualizes the most frequent terms in article titles and abstracts retrieved from Europe PMC. Try searching for any of these keywords in the Article Detail table below to find the specific publications behind each theme.
 
 ```{r}
 #| label: europe-pmc-wordcloud
@@ -1344,7 +1346,7 @@ ct_timeline_plot
 
 #### Clinical Trial Research Themes
 
-The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research.
+The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research. Try searching for any of these keywords in the Clinical Trial Detail table below to explore the specific trials behind each theme.
 
 ```{r}
 #| label: clinicaltrials-wordcloud
