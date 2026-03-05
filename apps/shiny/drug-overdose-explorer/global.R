@@ -140,7 +140,8 @@ load_cdc_data <- function() {
       date             = as.Date(paste(year_num, month_num, "01", sep = "-")),
       percent_complete = as.numeric(gsub("%", "", percent_complete))
     ) |>
-    filter(!is.na(date))
+    filter(!is.na(date)) |>
+    distinct(state_name, indicator, date, .keep_all = TRUE)
 }
 
 load_usaspending_data <- function() {

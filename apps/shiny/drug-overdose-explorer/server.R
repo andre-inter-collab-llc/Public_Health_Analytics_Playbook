@@ -61,10 +61,6 @@ server <- function(input, output, session) {
                            choices = indicators,
                            selected = "Number of Drug Overdose Deaths",
                            server = TRUE)
-      updateSelectizeInput(session, "cdc_states",
-                           choices = c("United States", states),
-                           selected = "United States",
-                           server = TRUE)
       updateSliderInput(session, "cdc_years",
                         min = yr[1], max = yr[2], value = yr)
 
@@ -154,21 +150,6 @@ server <- function(input, output, session) {
   }, once = TRUE)
 
   # ===========================================================================
-  # CDC: Top 10 button
-  # ===========================================================================
-  observeEvent(input$cdc_add_top10, {
-    req(cdc_loaded())
-    data <- cdc_data()
-    top10 <- data |>
-      filter(state_name != "United States",
-             indicator == "Number of Drug Overdose Deaths",
-             !is.na(data_value)) |>
-      group_by(state_name) |> filter(date == max(date)) |> ungroup() |>
-      arrange(desc(data_value)) |> slice_head(n = 10) |> pull(state_name)
-    updateSelectizeInput(session, "cdc_states", selected = top10)
-  })
-
-  # ===========================================================================
   # TAB 1: CDC Overdose Mortality
   # ===========================================================================
 
@@ -179,43 +160,63 @@ server <- function(input, output, session) {
     ifelse(cdc_val_col() == "data_value", "Reported Deaths", "Predicted Deaths")
   })
 
-  # --- National Trend ---
+  # --- National Trend (US + all states, states hidden by default) ---
   output$cdc_national_trend <- renderPlotly({
     req(cdc_loaded(), length(cdc_indicator()) > 0)
     val_col   <- cdc_val_col()
     val_label <- cdc_val_label()
 
+    # Use first selected indicator for the jurisdiction overlay
+    ind <- cdc_indicator()[1]
+
     df <- cdc_data() |>
-      filter(state_name == "United States",
-             indicator %in% cdc_indicator(),
+      filter(indicator == ind,
              year_num >= input$cdc_years[1],
              year_num <= input$cdc_years[2],
-             !is.na(.data[[val_col]]))
-    req(nrow(df) > 0)
+             !is.na(.data[[val_col]])) |>
+      arrange(state_name, date)
 
-    indicators <- unique(df$indicator)
-    p <- plot_ly()
-    for (ind in indicators) {
-      ind_df <- df |> filter(indicator == ind)
-      ind_color <- drug_colors[ind] %||% brand$slate
+    us_data    <- df |> filter(state_name == "United States")
+    state_data <- df |> filter(state_name != "United States")
+    req(nrow(us_data) > 0)
+
+    state_names <- sort(unique(state_data$state_name))
+
+    p <- plot_ly() |>
+      add_trace(
+        data = us_data,
+        x = ~date, y = ~.data[[val_col]],
+        type = "scatter", mode = "lines",
+        name = "United States",
+        line = list(color = brand$blue, width = 3),
+        hovertemplate = paste0(
+          "<b>United States</b><br>",
+          "Period ending: %{x|%B %Y}<br>",
+          val_label, ": %{y:,.0f}<extra></extra>"
+        )
+      )
+
+    for (st in state_names) {
+      st_df <- state_data |> filter(state_name == st)
       p <- p |>
         add_trace(
-          data = ind_df,
+          data = st_df,
           x = ~date, y = ~.data[[val_col]],
           type = "scatter", mode = "lines",
-          name = ind,
-          line = list(color = ind_color, width = 2.5),
+          name = st,
+          visible = "legendonly",
           hovertemplate = paste0(
-            "<b>", ind, "</b><br>",
+            "<b>", st, "</b><br>",
             "Period ending: %{x|%B %Y}<br>",
             val_label, ": %{y:,.0f}<extra></extra>"
           )
         )
     }
+
     p |>
       layout(
         title = list(
-          text = "12-Month Ending Provisional Drug Overdose Deaths",
+          text = "12-Month Ending Provisional Drug Overdose Deaths by Jurisdiction",
           font = list(size = 16)
         ),
         xaxis = list(
@@ -224,12 +225,16 @@ server <- function(input, output, session) {
           type = "date"
         ),
         yaxis = list(
-          title = val_label,
+          title = paste(val_label, "(12-month ending count)"),
           separatethousands = TRUE
         ),
-        legend = list(orientation = "h", y = -0.12, font = list(size = 11)),
+        legend = list(
+          orientation = "v",
+          x = 1.02, y = 1,
+          font = list(size = 10)
+        ),
         hovermode = "x unified",
-        margin = list(b = 80)
+        margin = list(r = 150)
       ) |>
       config(displayModeBar = TRUE)
   })
@@ -264,59 +269,6 @@ server <- function(input, output, session) {
                      font = list(size = 15)),
         margin = list(l = 0, r = 0, t = 40, b = 0)
       ) |> colorbar(title = "Deaths")
-  })
-
-  # --- State Trends ---
-  output$cdc_state_trend <- renderPlotly({
-    req(cdc_loaded(), length(input$cdc_states) > 0)
-    ind <- if (length(cdc_indicator()) > 0) cdc_indicator()[1]
-           else "Number of Drug Overdose Deaths"
-    val_col   <- cdc_val_col()
-    val_label <- cdc_val_label()
-
-    df <- cdc_data() |>
-      filter(state_name %in% input$cdc_states, indicator == ind,
-             year_num >= input$cdc_years[1], year_num <= input$cdc_years[2],
-             !is.na(.data[[val_col]]))
-    req(nrow(df) > 0)
-
-    state_names_sel <- unique(df$state_name)
-    p <- plot_ly()
-    for (st in state_names_sel) {
-      st_df <- df |> filter(state_name == st)
-      p <- p |>
-        add_trace(
-          data = st_df,
-          x = ~date, y = ~.data[[val_col]],
-          type = "scatter", mode = "lines",
-          name = st,
-          hovertemplate = paste0(
-            "<b>", st, "</b><br>",
-            "Period ending: %{x|%B %Y}<br>",
-            val_label, ": %{y:,.0f}<extra></extra>"
-          )
-        )
-    }
-    p |>
-      layout(
-        title = list(
-          text = paste("State Trends:", ind),
-          font = list(size = 16)
-        ),
-        xaxis = list(
-          title = "12-Month Period Ending",
-          rangeslider = list(visible = TRUE),
-          type = "date"
-        ),
-        yaxis = list(
-          title = val_label,
-          separatethousands = TRUE
-        ),
-        legend = list(orientation = "h", y = -0.12),
-        hovermode = "x unified",
-        margin = list(b = 80)
-      ) |>
-      config(displayModeBar = TRUE)
   })
 
   # --- Drug Category Bar Chart ---

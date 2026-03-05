@@ -81,22 +81,17 @@ ui <- page_navbar(
         card_body(
           class = "py-2",
           fluidRow(
-            column(3, selectizeInput("cdc_indicator", "Drug Category",
+            column(4, selectizeInput("cdc_indicator", "Drug Category",
                                      choices = NULL, multiple = TRUE,
                                      options = list(placeholder = "Select categories..."))),
-            column(3, selectizeInput("cdc_states", "State(s)",
-                                     choices = NULL, multiple = TRUE,
-                                     options = list(placeholder = "Select states..."))),
-            column(3, sliderInput("cdc_years", "Year Range",
+            column(4, sliderInput("cdc_years", "Year Range",
                                   min = 2015, max = 2026, value = c(2015, 2026),
                                   step = 1, sep = "", ticks = FALSE)),
-            column(3,
+            column(4,
               radioButtons("cdc_value_type", "Death Count Type",
                            choices = c("Reported" = "data_value",
                                        "Predicted (adjusted)" = "predicted_value"),
-                           selected = "data_value", inline = TRUE),
-              actionButton("cdc_add_top10", "Select Top 10 States",
-                           class = "btn-outline-primary btn-sm w-100 mt-1")
+                           selected = "data_value", inline = TRUE)
             )
           )
         )
@@ -107,7 +102,6 @@ ui <- page_navbar(
         class = "d-flex flex-wrap gap-2 my-3 p-2 bg-light rounded shadow-sm",
         scroll_btn("cdc-trend", "National Trend"),
         scroll_btn("cdc-map", "State Map"),
-        scroll_btn("cdc-states", "State Trends"),
         scroll_btn("cdc-drugs-bar", "Drug Categories"),
         scroll_btn("cdc-drugs-area", "Drug Trends"),
         scroll_btn("cdc-table", "Data Table")
@@ -115,16 +109,12 @@ ui <- page_navbar(
 
       # Visualizations
       div(id = "cdc-trend",
-        card(card_header("U.S. Drug Overdose Deaths Over Time"),
+        card(card_header("12-Month Ending Provisional Drug Overdose Deaths by Jurisdiction"),
              card_body(plotlyOutput("cdc_national_trend", height = "750px")))
       ),
       div(id = "cdc-map",
         card(card_header("State Choropleth Map (Latest Period)"),
              card_body(plotlyOutput("cdc_state_map", height = "650px")))
-      ),
-      div(id = "cdc-states",
-        card(card_header("State Trends Over Time"),
-             card_body(plotlyOutput("cdc_state_trend", height = "750px")))
       ),
       div(id = "cdc-drugs-bar",
         card(card_header("Latest 12-Month Totals by Drug Category"),
@@ -132,7 +122,18 @@ ui <- page_navbar(
       ),
       div(id = "cdc-drugs-area",
         card(card_header("Drug Category Trends Over Time"),
-             card_body(plotlyOutput("cdc_drug_area", height = "750px")))
+             card_body(
+               plotlyOutput("cdc_drug_area", height = "750px"),
+               tags$div(class = "alert alert-info mt-2 small", role = "alert",
+                 icon("circle-info"),
+                 " Note: The CDC VSRR dataset contains a known data anomaly at March 2021, ",
+                 "where Synthetic opioids (T40.4) has no reported value and three other drug ",
+                 "categories have duplicate rows. This causes a visible dip in the stacked ",
+                 "area chart at that point. The raw data is shown as reported; this anomaly ",
+                 "warrants further investigation with CDC source files."
+               )
+             )
+        )
       ),
       div(id = "cdc-table",
         card(dl_header("CDC Overdose Data", "cdc_download_xlsx"),
