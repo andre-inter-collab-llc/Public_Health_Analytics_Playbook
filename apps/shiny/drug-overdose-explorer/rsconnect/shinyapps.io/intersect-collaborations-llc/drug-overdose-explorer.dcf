@@ -1,0 +1,10 @@
+name: drug-overdose-explorer
+title:
+username: intersect-collaborations-llc
+account: intersect-collaborations-llc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16825530
+bundleId: 11668207
+url: https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/
+version: 1

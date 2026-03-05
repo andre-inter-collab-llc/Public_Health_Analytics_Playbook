@@ -1,6 +1,7 @@
 ---
 title: "The U.S. Drug Overdose Crisis"
 author: "André van Zyl, MPH"
+date-modified: today
 ---
 
 # The U.S. Drug Overdose Crisis
@@ -12,6 +13,10 @@ According to the [CDC National Center for Health Statistics](https://www.cdc.gov
 No peer nation experiences anything comparable. The [Commonwealth Fund 2025 Scorecard on State Health System Performance](https://www.commonwealthfund.org/publications/scorecard/2025/jun/2025-scorecard-state-health-system-performance) documents that premature, avoidable deaths are increasing in the United States while declining in comparable high-income countries, with drug overdose a major contributor to this divergence [@commonwealth2025]. The rate of avoidable mortality in West Virginia is more than twice the rate in Massachusetts, and wide racial disparities in premature deaths are the norm in most states [@commonwealth2025]. While overdose deaths fell slightly between 2022 and 2023 in 37 states, the total remains above 100,000 annually, and rates spiked by 25% or more in Nevada, Oregon, Washington, and Alaska [@commonwealth2025].
 
 This chapter explores what the data shows, where the crisis hits hardest, and how to access and analyze the underlying datasets and research literature programmatically.
+
+::: {.callout-tip title="Interactive Dashboard"}
+An interactive companion dashboard, the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/), accompanies this chapter. It integrates the same six data sources covered below into a single R Shiny application with on-demand data loading, interactive visualizations, and Excel downloads with clickable links to source records. All source code for both this chapter and the dashboard is publicly available on [GitHub](https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook).
+:::
 
 ## Why This Chapter
 
@@ -113,7 +118,6 @@ library(jsonlite)
 library(dplyr)
 library(ggplot2)
 library(plotly)
-library(DT)
 library(tidytext)
 library(ggwordcloud)
 library(tidyr)
@@ -249,40 +253,33 @@ p <- p |>
 p
 ```
 
-#### Overdose Data Detail
+#### States with the Highest Overdose Deaths
 
-The table below lists the full CDC provisional overdose dataset. Use the filters to explore specific states, years, or months.
+The table below shows the five states with the highest reported drug overdose death counts in the most recent 12-month period available. For the full filterable dataset with all states and time periods, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ```{r}
 #| label: overdose-data-table
 #| eval: true
 #| code-fold: true
 
-library(DT)
-
 overdose_raw |>
   mutate(
     data_value = as.numeric(data_value),
-    predicted_value = as.numeric(predicted_value),
-    percent_complete = as.numeric(percent_complete)
+    predicted_value = as.numeric(predicted_value)
   ) |>
+  filter(state_name != "United States", !is.na(data_value)) |>
+  arrange(desc(year), desc(match(month, month.name))) |>
+  distinct(state_name, .keep_all = TRUE) |>
+  arrange(desc(data_value)) |>
+  head(5) |>
   select(
-    `State Name` = state_name, Year = year, Month = month,
-    `Reported Deaths` = data_value, `Predicted Deaths` = predicted_value,
-    `% Complete` = percent_complete
+    State = state_name, Year = year, Month = month,
+    `Reported Deaths` = data_value, `Predicted Deaths` = predicted_value
   ) |>
-  datatable(
-    caption = "CDC VSRR Provisional Drug Overdose Death Counts",
-    filter = "top",
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(1, "asc"), list(2, "desc"))
-    ),
-    rownames = FALSE
-  ) |>
-  formatRound(c("Reported Deaths", "Predicted Deaths"), digits = 0) |>
-  formatRound("% Complete", digits = 1)
+  knitr::kable(
+    format.args = list(big.mark = ","),
+    caption = "Top 5 States by Reported Drug Overdose Deaths (Latest 12-Month Period)"
+  )
 ```
 
 ## What the Interventions Look Like
@@ -369,8 +366,8 @@ awards <- spending_data$results |>
     # Build a clickable link to the award page on USAspending.gov
     Award = ifelse(
       !is.na(generated_internal_id) & generated_internal_id != "",
-      paste0("[", `Award ID`, "](https://www.usaspending.gov/award/",
-             generated_internal_id, ")"),
+      paste0('<a href="https://www.usaspending.gov/award/',
+             generated_internal_id, '" target="_blank">', `Award ID`, '</a>'),
       `Award ID`
     )
   ) |>
@@ -404,7 +401,7 @@ The query returned **`r format(nrow(awards), big.mark = ",")`** awards, with a c
 
 #### What Are These Awards Funding?
 
-The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r format(nrow(awards), big.mark = ",")` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending. Try searching for any of these keywords in the Award Detail table below to explore the specific grants behind each theme.
+The word cloud below visualizes the most frequent terms appearing in award descriptions across all `r format(nrow(awards), big.mark = ",")` retrieved opioid-related grants. Larger words appear more often, revealing the dominant themes in federal spending. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full award dataset.
 
 ```{r}
 #| label: usaspending-wordcloud
@@ -519,45 +516,7 @@ funding_plot <- plot_ly(
 funding_plot
 ```
 
-#### Award Detail
-
-The table below lists all retrieved awards with full descriptions. Use the search box to filter by keyword and click column headers to sort.
-
-```{r}
-#| label: usaspending-award-table
-#| eval: true
-#| code-fold: true
-
-library(DT)
-
-awards |>
-  mutate(
-    `Start Date` = as.Date(`Start Date`),
-    `Award Amount` = as.numeric(`Award Amount`)
-  ) |>
-  select(
-    Award, `Awarding Sub Agency`, `Recipient Name`, `Award Amount`,
-    `Start Date`, Description
-  ) |>
-  arrange(desc(`Award Amount`)) |>
-  datatable(
-    caption = paste0("Opioid-Related Federal Grant Awards (",
-                     year_start, "-", year_end, ")"),
-    filter = "top",
-    escape = FALSE,
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(3, "desc")),
-      columnDefs = list(
-        list(width = "300px", targets = 5)
-      )
-    ),
-    rownames = FALSE
-  ) |>
-  formatCurrency("Award Amount", digits = 0) |>
-  formatDate("Start Date", method = "toLocaleDateString")
-```
+For the full searchable and downloadable award dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ::: {.callout-note title="Data Source"}
 USAspending is the official U.S. government open data source for federal spending. HHS TAGGS provides more granular transaction-level tracking of HHS grant obligations specifically.
@@ -712,7 +671,7 @@ pubmed_plot
 
 #### Research Themes in Article Titles
 
-The word cloud below visualizes the most frequent terms appearing in the titles of all `r nrow(articles)` retrieved PubMed articles. This provides a quick thematic overview of the research landscape. Try searching for any of these keywords in the Publication Detail table below to find the specific articles behind each theme.
+The word cloud below visualizes the most frequent terms appearing in the titles of all `r nrow(articles)` retrieved PubMed articles. This provides a quick thematic overview of the research landscape. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full publication dataset.
 
 ```{r}
 #| label: pubmed-wordcloud
@@ -748,54 +707,27 @@ ggplot(pubmed_title_words |> head(80), aes(label = word, size = n, color = n)) +
   )
 ```
 
-#### Publication Detail
+#### Most Recent Publications
 
-The table below lists all retrieved articles. Use the search box to filter by keyword, journal, or date, and click column headers to sort.
+The table below shows the five most recently published opioid overdose fentanyl articles indexed in PubMed. For the full searchable and downloadable publication dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ```{r}
 #| label: pubmed-article-table
 #| eval: true
 #| code-fold: true
 
-library(DT)
-
 articles |>
-  mutate(
-    # Create clickable PubMed link
-    PMID = ifelse(
-      !is.na(pmid),
-      paste0('<a href="https://pubmed.ncbi.nlm.nih.gov/', pmid,
-             '/" target="_blank">', pmid, '</a>'),
-      pmid
-    ),
-    # Create clickable DOI link
-    DOI = ifelse(
-      !is.na(doi),
-      paste0('<a href="https://doi.org/', doi,
-             '" target="_blank">', doi, '</a>'),
-      ""
-    )
-  ) |>
+  arrange(desc(pub_date)) |>
+  head(5) |>
   select(
-    PMID, Title = title, Journal = journal,
-    `Publication Date` = pub_date, DOI
+    PMID = pmid, Title = title, Journal = journal,
+    `Publication Date` = pub_date
   ) |>
-  datatable(
+  knitr::kable(
     caption = paste0(
-      "PubMed: Opioid Overdose Fentanyl Research (",
+      "5 Most Recent PubMed Articles: Opioid Overdose Fentanyl Research (",
       format(date_start, "%Y"), "-", format(date_end, "%Y"), ")"
-    ),
-    filter = "top",
-    escape = FALSE,
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(3, "desc")),
-      columnDefs = list(
-        list(width = "400px", targets = 1)
-      )
-    ),
-    rownames = FALSE
+    )
   )
 ```
 
@@ -932,7 +864,7 @@ nih_timeline_plot
 
 #### What Is NIH Funding?
 
-The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes. Try searching for any of these keywords in the Project Detail table below to explore the specific grants behind each theme.
+The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full project dataset.
 
 ```{r}
 #| label: nih-reporter-wordcloud
@@ -971,59 +903,32 @@ ggplot(nih_word_counts |> head(80), aes(label = word, size = n, color = n)) +
   )
 ```
 
-#### Project Detail
+#### Highest-Funded Projects
 
-The table below lists all retrieved NIH-funded projects. Use the search box to filter by keyword, PI, organization, or fiscal year, and click column headers to sort.
+The table below shows the five largest NIH-funded opioid overdose research projects by award amount. For the full searchable and downloadable project dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ```{r}
 #| label: nih-reporter-table
 #| eval: true
 #| code-fold: true
 
-library(DT)
-
 projects |>
-  mutate(
-    # Create clickable link to NIH RePORTER project page
-    `Project Number` = ifelse(
-      !is.na(project_num),
-      paste0('<a href="https://reporter.nih.gov/project-details/',
-             gsub(" ", "", project_num),
-             '" target="_blank">', project_num, '</a>'),
-      project_num
-    ),
-    `Award Amount` = award_amount,
-    # Truncate abstracts for display
-    Abstract = ifelse(
-      !is.na(abstract_text) & nchar(abstract_text) > 200,
-      paste0(substr(abstract_text, 1, 200), "..."),
-      abstract_text
-    )
-  ) |>
+  arrange(desc(award_amount)) |>
+  head(5) |>
   select(
-    `Project Number`, `Fiscal Year` = fiscal_year,
+    `Project Number` = project_num,
+    `Fiscal Year` = fiscal_year,
     Title = title, PI = pi_name,
-    Organization = organization, `Award Amount`, Abstract
+    Organization = organization,
+    `Award Amount` = award_amount
   ) |>
-  datatable(
+  knitr::kable(
+    format.args = list(big.mark = ","),
     caption = paste0(
-      "NIH-Funded Opioid Overdose Research Projects (",
+      "Top 5 NIH-Funded Opioid Overdose Research Projects by Award Amount (",
       year_end - 4, "-", year_end, ")"
-    ),
-    filter = "top",
-    escape = FALSE,
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(5, "desc")),
-      columnDefs = list(
-        list(width = "300px", targets = 2),
-        list(width = "300px", targets = 6)
-      )
-    ),
-    rownames = FALSE
-  ) |>
-  formatCurrency("Award Amount", digits = 0)
+    )
+  )
 ```
 
 ::: {.callout-note title="Data Source"}
@@ -1129,7 +1034,7 @@ epmc_timeline_plot
 
 #### Europe PMC: Research Themes
 
-The word cloud below visualizes the most frequent terms in article titles and abstracts retrieved from Europe PMC. Try searching for any of these keywords in the Article Detail table below to find the specific publications behind each theme.
+The word cloud below visualizes the most frequent terms in article titles and abstracts retrieved from Europe PMC. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full article dataset.
 
 ```{r}
 #| label: europe-pmc-wordcloud
@@ -1167,53 +1072,31 @@ ggplot(epmc_word_counts |> head(80), aes(label = word, size = n, color = n)) +
   )
 ```
 
-#### Europe PMC: Article Detail
+#### Most-Cited Articles
 
-The table below lists all retrieved articles. Use the search box to filter by keyword, journal, year, or open access status.
+The table below shows the five most-cited opioid overdose fentanyl articles indexed in Europe PMC. For the full searchable and downloadable article dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ```{r}
 #| label: europe-pmc-table
 #| eval: true
 #| code-fold: true
 
-library(DT)
-
 epmc_articles |>
   mutate(
-    PMID = ifelse(
-      !is.na(pmid),
-      paste0('<a href="https://europepmc.org/article/med/', pmid,
-             '" target="_blank">', pmid, '</a>'),
-      ""
-    ),
-    DOI = ifelse(
-      !is.na(doi),
-      paste0('<a href="https://doi.org/', doi,
-             '" target="_blank">', doi, '</a>'),
-      ""
-    ),
-    `Open Access` = ifelse(is_open_access == "Y", "Yes", "No")
+    `Open Access` = ifelse(is_open_access == "Y", "Yes", "No"),
+    `Cited By` = as.integer(cited_by_count)
   ) |>
+  arrange(desc(`Cited By`)) |>
+  head(5) |>
   select(
-    PMID, Title = title, Journal = journal,
-    Year = year, `Open Access`, `Cited By` = cited_by_count, DOI
+    PMID = pmid, Title = title, Journal = journal,
+    Year = year, `Open Access`, `Cited By`
   ) |>
-  datatable(
+  knitr::kable(
     caption = paste0(
-      "Europe PMC: Opioid Overdose Fentanyl Research (",
+      "Top 5 Most-Cited Articles: Opioid Overdose Fentanyl Research (",
       year_start, "-", year_end, ")"
-    ),
-    filter = "top",
-    escape = FALSE,
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(5, "desc")),
-      columnDefs = list(
-        list(width = "400px", targets = 1)
-      )
-    ),
-    rownames = FALSE
+    )
   )
 ```
 
@@ -1346,7 +1229,7 @@ ct_timeline_plot
 
 #### Clinical Trial Research Themes
 
-The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research. Try searching for any of these keywords in the Clinical Trial Detail table below to explore the specific trials behind each theme.
+The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full trial dataset.
 
 ```{r}
 #| label: clinicaltrials-wordcloud
@@ -1384,51 +1267,26 @@ ggplot(ct_word_counts |> head(80), aes(label = word, size = n, color = n)) +
   )
 ```
 
-#### Clinical Trial Detail
+#### Most Recent Trials
 
-The table below lists all retrieved clinical trials. Use the filters to explore by status, sponsor, or keyword.
+The table below shows the five most recently started opioid overdose intervention trials. For the full searchable and downloadable trial dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ```{r}
 #| label: clinicaltrials-table
 #| eval: true
 #| code-fold: true
 
-library(DT)
-
 trials |>
-  mutate(
-    `NCT ID` = ifelse(
-      !is.na(nct_id),
-      paste0('<a href="https://clinicaltrials.gov/study/',
-             nct_id, '" target="_blank">', nct_id, '</a>'),
-      nct_id
-    ),
-    # Truncate descriptions for display
-    Description = ifelse(
-      !is.na(description) & nchar(description) > 200,
-      paste0(substr(description, 1, 200), "..."),
-      description
-    )
-  ) |>
+  arrange(desc(start_date)) |>
+  head(5) |>
   select(
-    `NCT ID`, Title = title, Status = status,
+    `NCT ID` = nct_id, Title = title, Status = status,
     `Start Date` = start_date, Sponsor = sponsor,
-    Enrollment = enrollment, Description
+    Enrollment = enrollment
   ) |>
-  datatable(
-    caption = "ClinicalTrials.gov: Opioid Overdose Intervention Trials",
-    filter = "top",
-    escape = FALSE,
-    options = list(
-      pageLength = 10,
-      scrollX = TRUE,
-      order = list(list(3, "desc")),
-      columnDefs = list(
-        list(width = "300px", targets = 1),
-        list(width = "300px", targets = 6)
-      )
-    ),
-    rownames = FALSE
+  knitr::kable(
+    format.args = list(big.mark = ","),
+    caption = "5 Most Recent Opioid Overdose Intervention Trials"
   )
 ```
 
