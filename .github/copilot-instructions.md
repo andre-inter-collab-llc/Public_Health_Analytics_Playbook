@@ -5,7 +5,7 @@
 
 **Public Health Analytics Playbook** is an open-source Quarto Book that explores real public health issues through reproducible data analysis. Each chapter tackles a specific public health problem, walks through publicly available data sources, and provides working R and Python code that readers can adapt for their own analyses. It is published to GitHub Pages.
 
-- **Public repository**: <https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook>
+- **Public repository**: <https://github.com/andre-inter-collab-llc/Public_Health_Analytics_Playbook>
 - **Published book**: <https://andre-inter-collab-llc.github.io/Public-Health-Analytics-Playbook/>
 
 ### Core Philosophy

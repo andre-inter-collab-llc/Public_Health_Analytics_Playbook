@@ -35,7 +35,7 @@ book:
   sidebar:
     search: true
 
-  repo-url: https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook
+  repo-url: https://github.com/andre-inter-collab-llc/Public_Health_Analytics_Playbook
   repo-actions: [issue]
 
 bibliography: assets/references/references.bib

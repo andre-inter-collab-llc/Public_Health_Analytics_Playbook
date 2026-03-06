@@ -15,7 +15,7 @@ No peer nation experiences anything comparable. The [Commonwealth Fund 2025 Scor
 This chapter explores what the data shows, where the crisis hits hardest, and how to access and analyze the underlying datasets and research literature programmatically.
 
 ::: {.callout-tip title="Interactive Dashboard"}
-An interactive companion dashboard, the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/), accompanies this chapter. It integrates the same six data sources covered below into a single R Shiny application with on-demand data loading, interactive visualizations, and Excel downloads with clickable links to source records. All source code for both this chapter and the dashboard is publicly available on [GitHub](https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook).
+An interactive companion dashboard, the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/), accompanies this chapter. It integrates the same six data sources covered below into a single R Shiny application with on-demand data loading, interactive visualizations, and Excel downloads with clickable links to source records. All source code for both this chapter and the dashboard is publicly available on [GitHub](https://github.com/andre-inter-collab-llc/Public_Health_Analytics_Playbook).
 :::
 
 ## Why This Chapter

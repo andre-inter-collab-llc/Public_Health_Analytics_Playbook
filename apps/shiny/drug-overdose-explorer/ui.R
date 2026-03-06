@@ -425,7 +425,7 @@ ui <- page_navbar(
         tags$p(
           "All source code for this dashboard and the accompanying chapter is publicly available on ",
           tags$a("GitHub",
-                 href = "https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook",
+                 href = "https://github.com/andre-inter-collab-llc/Public_Health_Analytics_Playbook",
                  target = "_blank"), "."
         ),
         tags$hr(),
@@ -444,7 +444,7 @@ ui <- page_navbar(
   nav_spacer(),
   nav_item(
     tags$a(icon("github"), " GitHub",
-           href = "https://github.com/andre-inter-collab-llc/Public-Health-Analytics-Playbook",
+           href = "https://github.com/andre-inter-collab-llc/Public_Health_Analytics_Playbook",
            target = "_blank", class = "nav-link")
   )
 )
