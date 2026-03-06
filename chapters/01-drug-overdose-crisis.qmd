@@ -309,6 +309,8 @@ request_body <- list(
     "Award ID", "Recipient Name", "Award Amount",
     "Awarding Agency", "Awarding Sub Agency",
     "Start Date", "End Date", "Description",
+    "Place of Performance State Code",
+    "Place of Performance Country Name",
     "generated_internal_id"
   ),
   limit = 100,
@@ -364,7 +366,9 @@ awards <- awards |>
 awards |>
   select(
     Award, `Recipient Name`, `Award Amount`,
-    `Awarding Sub Agency`, Description, `Start Date`
+    `Awarding Sub Agency`,
+    `Place of Performance State Code`,
+    Description, `Start Date`
   ) |>
   head(5) |>
   knitr::kable(

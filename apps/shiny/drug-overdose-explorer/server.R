@@ -538,7 +538,9 @@ server <- function(input, output, session) {
       mutate(`Start Date` = as.Date(`Start Date`),
              `Award Amount` = award_amount) |>
       select(`Award ID`, `Awarding Sub Agency`, `Recipient Name`,
-             `Award Amount`, `Start Date`, Description)
+             `Award Amount`, `Start Date`,
+             `Place of Performance State Code`,
+             Description)
   })
 
   output$funding_table <- renderDT({
@@ -554,7 +556,9 @@ server <- function(input, output, session) {
         )
       ) |>
       select(Award, `Awarding Sub Agency`, `Recipient Name`,
-             `Award Amount`, `Start Date`, Description)
+             `Award Amount`, `Start Date`,
+             `Place of Performance State Code`,
+             Description)
 
     datatable(display_df, filter = "top", escape = FALSE,
               options = list(pageLength = 20, scrollX = TRUE,

@@ -158,6 +158,8 @@ load_usaspending_data <- function() {
       "Award ID", "Recipient Name", "Award Amount",
       "Awarding Agency", "Awarding Sub Agency",
       "Start Date", "End Date", "Description",
+      "Place of Performance State Code",
+      "Place of Performance Country Name",
       "generated_internal_id"
     ),
     limit = 100,
