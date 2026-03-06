@@ -126,11 +126,9 @@ ui <- page_navbar(
                plotlyOutput("cdc_drug_area", height = "750px"),
                tags$div(class = "alert alert-info mt-2 small", role = "alert",
                  icon("circle-info"),
-                 " Note: The CDC VSRR dataset contains a known data anomaly at March 2021, ",
-                 "where Synthetic opioids (T40.4) has no reported value and three other drug ",
-                 "categories have duplicate rows. This causes a visible dip in the stacked ",
-                 "area chart at that point. The raw data is shown as reported; this anomaly ",
-                 "warrants further investigation with CDC source files."
+                 " Note: These four drug categories are not mutually exclusive. A single ",
+                 "death may involve multiple substances and appear in more than one category. ",
+                 "Stacked totals therefore overcount the number of unique deaths."
                )
              )
         )
@@ -175,7 +173,7 @@ ui <- page_navbar(
              card_body(
                tags$p(class = "text-muted small",
                       "Larger words appear more frequently. Search for these keywords in the table below."),
-               wordcloud2Output("funding_wordcloud", height = "450px")))
+               plotlyOutput("funding_wordcloud", height = "450px")))
       ),
       div(id = "funding-tbl",
         card(dl_header("Award Detail", "funding_download_xlsx"),
@@ -217,7 +215,7 @@ ui <- page_navbar(
              card_body(
                tags$p(class = "text-muted small",
                       "Search for these keywords in the table below to explore specific grants."),
-               wordcloud2Output("nih_wordcloud", height = "450px")))
+               plotlyOutput("nih_wordcloud", height = "450px")))
       ),
       div(id = "nih-tbl",
         card(dl_header("Project Detail", "nih_download_xlsx"),
@@ -259,7 +257,7 @@ ui <- page_navbar(
              card_body(
                tags$p(class = "text-muted small",
                       "Search for these keywords in the table below to explore specific trials."),
-               wordcloud2Output("ct_wordcloud", height = "450px")))
+               plotlyOutput("ct_wordcloud", height = "450px")))
       ),
       div(id = "ct-tbl",
         card(dl_header("Clinical Trial Detail", "ct_download_xlsx"),
@@ -301,7 +299,7 @@ ui <- page_navbar(
              card_body(
                tags$p(class = "text-muted small",
                       "Search for these keywords in the table below to find specific articles."),
-               wordcloud2Output("pubmed_wordcloud", height = "450px")))
+               plotlyOutput("pubmed_wordcloud", height = "450px")))
       ),
       div(id = "pm-tbl",
         card(dl_header("Publication Detail", "pubmed_download_xlsx"),
@@ -343,7 +341,7 @@ ui <- page_navbar(
              card_body(
                tags$p(class = "text-muted small",
                       "Search for these keywords in the table below to find specific publications."),
-               wordcloud2Output("epmc_wordcloud", height = "450px")))
+               plotlyOutput("epmc_wordcloud", height = "450px")))
       ),
       div(id = "epmc-tbl",
         card(dl_header("Article Detail", "epmc_download_xlsx"),

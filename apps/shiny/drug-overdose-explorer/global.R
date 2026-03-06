@@ -25,7 +25,6 @@ library(tidyr)
 library(plotly)
 library(DT)
 library(tidytext)
-library(wordcloud2)
 library(openxlsx)
 library(lubridate)
 
@@ -117,7 +116,7 @@ load_cdc_data <- function() {
         req_url_query(
           `$limit`  = page_size,
           `$offset` = offset,
-          `$order`  = "year ASC, month ASC"
+          `$order`  = "year ASC, month ASC, state_name ASC, indicator ASC"
         ) |>
         req_perform()
     }, error = function(e) NULL)

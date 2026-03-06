@@ -274,9 +274,12 @@ server <- function(input, output, session) {
   # --- Drug Category Bar Chart ---
   output$cdc_drug_bar <- renderPlotly({
     req(cdc_loaded())
+    # Exclude aggregate/non-drug indicators that would distort the scale
+    non_drug <- c("Number of Drug Overdose Deaths", "Number of Deaths",
+                  "Percent with drugs specified")
     latest <- cdc_data() |>
       filter(state_name == "United States",
-             indicator != "Number of Drug Overdose Deaths",
+             !indicator %in% non_drug,
              !is.na(data_value)) |>
       group_by(indicator) |> filter(date == max(date)) |> ungroup() |>
       arrange(data_value)
@@ -446,7 +449,7 @@ server <- function(input, output, session) {
       ) |> config(displayModeBar = TRUE)
   })
 
-  output$funding_wordcloud <- renderWordcloud2({
+  output$funding_wordcloud <- renderPlotly({
     req(funding_loaded())
     wc <- tibble(text = funding_data()$Description) |>
       filter(!is.na(text), text != "") |>
@@ -459,11 +462,16 @@ server <- function(input, output, session) {
                            as.character(year_start:year_end), "cfda", "fy"),
              nchar(word) > 2, !grepl("^[0-9]+$", word)) |>
       count(word, sort = TRUE) |>
-      head(80)
+      head(40)
 
-    wordcloud2(wc, size = 0.6, color = rep_len(
-      c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc)),
-      backgroundColor = "white", shape = "square")
+    wc_colors <- rep_len(c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc))
+    plot_ly(wc, y = ~reorder(word, n), x = ~n, type = "bar", orientation = "h",
+            marker = list(color = wc_colors),
+            hovertemplate = "<b>%{y}</b><br>Count: %{x}<extra></extra>") |>
+      layout(xaxis = list(title = "Frequency"),
+             yaxis = list(title = "", tickfont = list(size = 11)),
+             margin = list(l = 120)) |>
+      config(displayModeBar = FALSE)
   })
 
   funding_table_data <- reactive({
@@ -590,7 +598,7 @@ server <- function(input, output, session) {
       config(displayModeBar = TRUE)
   })
 
-  output$pubmed_wordcloud <- renderWordcloud2({
+  output$pubmed_wordcloud <- renderPlotly({
     req(pubmed_loaded())
     wc <- tibble(text = pubmed_data()$articles$title) |>
       filter(!is.na(text), text != "") |>
@@ -601,11 +609,16 @@ server <- function(input, output, session) {
                            "findings", "using", "related", "data"),
              nchar(word) > 2, !grepl("^[0-9]+$", word)) |>
       count(word, sort = TRUE) |>
-      head(80)
+      head(40)
 
-    wordcloud2(wc, size = 0.6, color = rep_len(
-      c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc)),
-      backgroundColor = "white", shape = "square")
+    wc_colors <- rep_len(c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc))
+    plot_ly(wc, y = ~reorder(word, n), x = ~n, type = "bar", orientation = "h",
+            marker = list(color = wc_colors),
+            hovertemplate = "<b>%{y}</b><br>Count: %{x}<extra></extra>") |>
+      layout(xaxis = list(title = "Frequency"),
+             yaxis = list(title = "", tickfont = list(size = 11)),
+             margin = list(l = 120)) |>
+      config(displayModeBar = FALSE)
   })
 
   pubmed_table_data <- reactive({
@@ -698,7 +711,7 @@ server <- function(input, output, session) {
       config(displayModeBar = TRUE)
   })
 
-  output$nih_wordcloud <- renderWordcloud2({
+  output$nih_wordcloud <- renderPlotly({
     req(nih_loaded())
     wc <- tibble(text = nih_data()$projects$abstract_text) |>
       filter(!is.na(text), text != "") |>
@@ -712,11 +725,16 @@ server <- function(input, output, session) {
                            "r01", "r21", "r34", "k01", "k23", "u01", "p50"),
              nchar(word) > 2, !grepl("^[0-9]+$", word)) |>
       count(word, sort = TRUE) |>
-      head(80)
+      head(40)
 
-    wordcloud2(wc, size = 0.6, color = rep_len(
-      c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc)),
-      backgroundColor = "white", shape = "square")
+    wc_colors <- rep_len(c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc))
+    plot_ly(wc, y = ~reorder(word, n), x = ~n, type = "bar", orientation = "h",
+            marker = list(color = wc_colors),
+            hovertemplate = "<b>%{y}</b><br>Count: %{x}<extra></extra>") |>
+      layout(xaxis = list(title = "Frequency"),
+             yaxis = list(title = "", tickfont = list(size = 11)),
+             margin = list(l = 120)) |>
+      config(displayModeBar = FALSE)
   })
 
   nih_table_data <- reactive({
@@ -813,7 +831,7 @@ server <- function(input, output, session) {
       config(displayModeBar = TRUE)
   })
 
-  output$epmc_wordcloud <- renderWordcloud2({
+  output$epmc_wordcloud <- renderPlotly({
     req(epmc_loaded())
     wc <- epmc_data()$articles |>
       mutate(text = paste(title, abstract, sep = " ")) |>
@@ -827,11 +845,16 @@ server <- function(input, output, session) {
                            "aim", "abstract", "introduction"),
              nchar(word) > 2, !grepl("^[0-9]+$", word)) |>
       count(word, sort = TRUE) |>
-      head(80)
+      head(40)
 
-    wordcloud2(wc, size = 0.6, color = rep_len(
-      c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc)),
-      backgroundColor = "white", shape = "square")
+    wc_colors <- rep_len(c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc))
+    plot_ly(wc, y = ~reorder(word, n), x = ~n, type = "bar", orientation = "h",
+            marker = list(color = wc_colors),
+            hovertemplate = "<b>%{y}</b><br>Count: %{x}<extra></extra>") |>
+      layout(xaxis = list(title = "Frequency"),
+             yaxis = list(title = "", tickfont = list(size = 11)),
+             margin = list(l = 120)) |>
+      config(displayModeBar = FALSE)
   })
 
   epmc_table_data <- reactive({
@@ -927,7 +950,7 @@ server <- function(input, output, session) {
       config(displayModeBar = TRUE)
   })
 
-  output$ct_wordcloud <- renderWordcloud2({
+  output$ct_wordcloud <- renderPlotly({
     req(ct_loaded())
     wc <- ct_data()$trials |>
       mutate(text = paste(title, description, sep = " ")) |>
@@ -941,11 +964,16 @@ server <- function(input, output, session) {
                            "aims", "aim", "objective", "primary"),
              nchar(word) > 2, !grepl("^[0-9]+$", word)) |>
       count(word, sort = TRUE) |>
-      head(80)
+      head(40)
 
-    wordcloud2(wc, size = 0.6, color = rep_len(
-      c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc)),
-      backgroundColor = "white", shape = "square")
+    wc_colors <- rep_len(c(brand$blue, brand$teal, brand$slate, brand$navy), nrow(wc))
+    plot_ly(wc, y = ~reorder(word, n), x = ~n, type = "bar", orientation = "h",
+            marker = list(color = wc_colors),
+            hovertemplate = "<b>%{y}</b><br>Count: %{x}<extra></extra>") |>
+      layout(xaxis = list(title = "Frequency"),
+             yaxis = list(title = "", tickfont = list(size = 11)),
+             margin = list(l = 120)) |>
+      config(displayModeBar = FALSE)
   })
 
   ct_table_data <- reactive({
