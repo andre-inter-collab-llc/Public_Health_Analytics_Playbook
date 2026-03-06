@@ -79,26 +79,7 @@ The dataset reports **12-month ending counts**, meaning each row represents the 
 - **Cocaine** (T40.5)
 - **Psychostimulants with abuse potential**, including methamphetamine (T43.6)
 
-Because a single death may involve multiple substances, it can appear in more than one drug category. For example, a death involving both heroin and fentanyl would be counted under both heroin and synthetic opioids other than methadone.
-
-#### Dataset Columns
-
-The dataset contains 12 fields:
-
-| Column | API Field | Type | Description |
-|:---|:---|:---|:---|
-| State | `state` | Text | Two-letter jurisdiction abbreviation (e.g., "US", "CO", "NM") |
-| Year | `year` | Number | Calendar year of the 12-month ending period |
-| Month | `month` | Text | Month name of the 12-month ending period (e.g., "January") |
-| Period | `period` | Text | Label describing the time span (e.g., "12 Month-ending Provisional Counts") |
-| Indicator | `indicator` | Text | The specific outcome measured: "Number of Drug Overdose Deaths" or a drug-specific category such as "Heroin (T40.1)" or "Synthetic opioids, excl. methadone (T40.4)" |
-| Data Value | `data_value` | Number | The reported provisional count of deaths for the indicator, jurisdiction, and period |
-| Predicted Value | `predicted_value` | Number | The model-adjusted count that corrects for reporting delays and pending investigations |
-| Percent Complete | `percent_complete` | Text | Percentage of expected death records received and processed for the jurisdiction and period |
-| Percent Pending Investigation | `percent_pending_investigation` | Number | Percentage of death records where manner of death is listed as "pending investigation" |
-| State Name | `state_name` | Text | Full jurisdiction name (e.g., "United States", "Colorado") |
-| Footnote | `footnote` | Text | Contextual notes about data quality or suppression for the observation |
-| Footnote Symbol | `footnote_symbol` | Text | Symbol corresponding to the footnote (if any) |
+Because a single death may involve multiple substances, it can appear in more than one drug category. For example, a death involving both heroin and fentanyl would be counted under both heroin and synthetic opioids other than methadone. For full column definitions and metadata, see the [dataset documentation](https://data.cdc.gov/National-Center-for-Health-Statistics/VSRR-Provisional-Drug-Overdose-Death-Counts/xkb8-kh2a/about_data).
 
 ::: {.callout-warning title="Interpreting Provisional Data"}
 Provisional counts are often lower than final counts due to reporting delays. The `predicted_value` column provides a corrected estimate but may not fully account for unusually long delays in some jurisdictions. Comparisons of drug-specific death counts across states should be made cautiously because the percentage of death certificates with specific drugs recorded varies by jurisdiction. For definitive counts, use the [final mortality data](https://www.cdc.gov/nchs/nvss/mortality_public_use_data.htm) published annually through CDC WONDER.
@@ -127,8 +108,6 @@ library(knitr)
 ```{r}
 #| label: cdc-overdose-data
 #| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
 #| code-fold: true
 
 # CDC provisional drug overdose death counts (Socrata endpoint)
@@ -303,8 +282,6 @@ The [USAspending API](https://api.usaspending.gov/) enables programmatic trackin
 ```{r}
 #| label: usaspending-opioid
 #| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
 #| code-fold: true
 
 # Query USAspending for opioid-related grants
@@ -516,6 +493,96 @@ funding_plot <- plot_ly(
 funding_plot
 ```
 
+#### Total Federal Funding by Agency
+
+The chart below summarizes annual opioid-related grant funding by awarding sub-agency. The stacked bars show each agency's contribution, while the line traces the overall annual total.
+
+```{r}
+#| label: usaspending-funding-by-agency
+#| eval: true
+#| code-fold: true
+
+# Summarize annual funding by sub-agency
+funding_by_agency <- awards |>
+  mutate(
+    start_date = as.Date(`Start Date`),
+    start_year = as.integer(format(start_date, "%Y")),
+    agency = `Awarding Sub Agency`
+  ) |>
+  filter(!is.na(start_year), !is.na(award_amount)) |>
+  group_by(start_year, agency) |>
+  summarise(
+    total = sum(award_amount, na.rm = TRUE),
+    n_awards = n(),
+    .groups = "drop"
+  )
+
+# Overall annual totals for the line trace
+funding_annual_total <- funding_by_agency |>
+  group_by(start_year) |>
+  summarise(
+    grand_total = sum(total, na.rm = TRUE),
+    n_awards = sum(n_awards),
+    .groups = "drop"
+  )
+
+agency_bar_plot <- plot_ly() |>
+  add_trace(
+    data = funding_by_agency,
+    x = ~start_year,
+    y = ~total,
+    color = ~agency,
+    colors = agency_colors,
+    type = "bar",
+    text = ~paste0(
+      "<b>", agency, "</b><br>",
+      "Year: ", start_year, "<br>",
+      "Awards: ", n_awards, "<br>",
+      "Total: $", formatC(total, format = "f", digits = 0, big.mark = ",")
+    ),
+    hoverinfo = "text"
+  ) |>
+  add_trace(
+    data = funding_annual_total,
+    x = ~start_year,
+    y = ~grand_total,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Annual Total",
+    line = list(color = "#020506", width = 3),
+    marker = list(color = "#020506", size = 8),
+    text = ~paste0(
+      "<b>Annual Total</b><br>",
+      "Year: ", start_year, "<br>",
+      "Awards: ", n_awards, "<br>",
+      "Total: $", formatC(grand_total, format = "f", digits = 0, big.mark = ",")
+    ),
+    hoverinfo = "text"
+  ) |>
+  layout(
+    title = list(
+      text = paste0("Total Opioid-Related Federal Grant Funding by Agency (",
+                    year_start, "-", year_end, ")"),
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Year", dtick = 1),
+    yaxis = list(title = "Total Funding ($)", separatethousands = TRUE),
+    barmode = "stack",
+    legend = list(
+      title = list(text = "Awarding Sub Agency"),
+      orientation = "h",
+      y = -0.25, x = 0,
+      font = list(size = 9)
+    ),
+    hovermode = "x unified",
+    margin = list(b = 120),
+    height = 800
+  ) |>
+  config(displayModeBar = TRUE)
+
+agency_bar_plot
+```
+
 For the full searchable and downloadable award dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
 
 ::: {.callout-note title="Data Source"}
@@ -526,6 +593,496 @@ USAspending is the official U.S. government open data source for federal spendin
 
 Beyond surveillance data, a large and growing body of peer-reviewed research examines the epidemiology, pharmacology, policy responses, and social determinants of the overdose crisis. Several public databases allow programmatic access to this literature and to information about funded research projects.
 
+### NIH RePORTER (Funded Research Projects)
+
+[NIH RePORTER](https://reporter.nih.gov/) tracks all NIH-funded research projects, including active grants, publications, patents, and clinical trials. Its [API](https://api.reporter.nih.gov/) supports POST-based queries to identify what research is currently being funded on any topic.
+
+```{r}
+#| label: nih-reporter-search
+#| eval: true
+#| code-fold: true
+
+# NIH RePORTER API: find funded opioid overdose research projects
+# Documentation: https://api.reporter.nih.gov/
+
+reporter_url <- "https://api.reporter.nih.gov/v2/projects/search"
+
+# Paginate to collect all available projects
+all_projects <- list()
+for (pg in 0:99) {
+  reporter_body <- list(
+    criteria = list(
+      advanced_text_search = list(
+        operator = "and",
+        search_field = "projecttitle,terms",
+        search_text = "opioid overdose fentanyl"
+      ),
+      fiscal_years = as.list((year_end - 4L):year_end),
+      exclude_subprojects = TRUE
+    ),
+    offset = pg * 100,
+    limit = 100,
+    sort_field = "FiscalYear",
+    sort_order = "desc"
+  )
+
+  reporter_response <- request(reporter_url) |>
+    req_body_json(reporter_body) |>
+    req_perform()
+
+  reporter_data <- reporter_response |>
+    resp_body_json()
+
+  if (length(reporter_data$results) == 0) break
+  all_projects[[pg + 1]] <- reporter_data$results
+  if (length(reporter_data$results) < 100) break
+}
+
+reporter_total <- reporter_data$meta$total
+
+# Parse all results into a dataframe
+projects <- lapply(unlist(all_projects, recursive = FALSE), function(p) {
+  tibble(
+    project_num   = p$project_num %||% NA_character_,
+    fiscal_year   = p$fiscal_year %||% NA_integer_,
+    title         = p$project_title %||% NA_character_,
+    pi_name       = {
+      if (!is.null(p$principal_investigators) && length(p$principal_investigators) > 0)
+        p$principal_investigators[[1]]$full_name
+      else NA_character_
+    },
+    organization  = p$organization$org_name %||% NA_character_,
+    ic_name       = {
+      ics <- p$agency_ic_fundings
+      if (!is.null(ics) && length(ics) > 0) ics[[1]]$abbreviation %||% NA_character_
+      else NA_character_
+    },
+    award_amount  = p$award_amount %||% NA_real_,
+    abstract_text = p$abstract_text %||% NA_character_
+  )
+}) |>
+  bind_rows()
+```
+
+The search matched **`r format(reporter_total, big.mark = ",")`** projects. **`r format(nrow(projects), big.mark = ",")`** were retrieved, representing **$`r format(sum(projects$award_amount, na.rm = TRUE), big.mark = ",")`** in total funding.
+
+#### NIH Project Awards Over Time
+
+The chart below plots individual NIH-funded project award amounts by fiscal year, colored by NIH Institute/Center (IC). Hover over each point to see the project title, PI, and award amount.
+
+```{r}
+#| label: nih-reporter-scatter
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+
+nih_scatter_df <- projects |>
+  filter(!is.na(award_amount), !is.na(fiscal_year)) |>
+  mutate(
+    ic_label = ifelse(is.na(ic_name), "Other", ic_name),
+    hover_text = paste0(
+      "<b>", ic_label, "</b><br>",
+      "PI: ", pi_name, "<br>",
+      "Title: ", substr(title, 1, 80), "<br>",
+      "Award: $", formatC(award_amount, format = "f", digits = 0, big.mark = ",")
+    )
+  )
+
+ic_colors <- c(
+  "#2494f7", "#00a4bb", "#01272f", "#204d70",
+  "#e07b39", "#6b4c9a", "#d94f4f", "#2ca02c",
+  "#8c564b", "#17becf", "#bcbd22", "#7f7f7f"
+)
+
+nih_scatter_plot <- plot_ly(
+  data = nih_scatter_df,
+  x = ~fiscal_year,
+  y = ~award_amount,
+  color = ~ic_label,
+  colors = ic_colors,
+  type = "scatter",
+  mode = "markers",
+  marker = list(size = 8, opacity = 0.7),
+  text = ~hover_text,
+  hoverinfo = "text"
+) |>
+  layout(
+    title = list(
+      text = paste0("NIH Opioid Research Project Awards (",
+                    year_end - 4, "-", year_end, ")"),
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Fiscal Year", dtick = 1),
+    yaxis = list(
+      title = "Award Amount ($)",
+      separatethousands = TRUE,
+      type = "log"
+    ),
+    legend = list(
+      title = list(text = "NIH Institute/Center"),
+      orientation = "h",
+      y = -0.25, x = 0,
+      font = list(size = 9)
+    ),
+    hovermode = "closest",
+    margin = list(b = 120),
+    height = 800
+  ) |>
+  config(displayModeBar = TRUE)
+
+nih_scatter_plot
+```
+
+#### NIH Funding by Institute/Center
+
+The stacked bar chart below summarizes annual NIH opioid research funding by Institute/Center. The line traces the overall annual total.
+
+```{r}
+#| label: nih-reporter-timeline
+#| eval: true
+#| code-fold: true
+
+# Summarize funding by fiscal year and IC
+nih_by_ic <- projects |>
+  filter(!is.na(award_amount), !is.na(fiscal_year)) |>
+  mutate(ic_label = ifelse(is.na(ic_name), "Other", ic_name)) |>
+  group_by(fiscal_year, ic_label) |>
+  summarise(
+    total = sum(award_amount, na.rm = TRUE),
+    n_projects = n(),
+    .groups = "drop"
+  )
+
+nih_annual_total <- nih_by_ic |>
+  group_by(fiscal_year) |>
+  summarise(
+    grand_total = sum(total, na.rm = TRUE),
+    n_projects = sum(n_projects),
+    .groups = "drop"
+  )
+
+nih_timeline_plot <- plot_ly() |>
+  add_trace(
+    data = nih_by_ic,
+    x = ~fiscal_year,
+    y = ~total,
+    color = ~ic_label,
+    colors = ic_colors,
+    type = "bar",
+    text = ~paste0(
+      "<b>", ic_label, "</b><br>",
+      "FY ", fiscal_year, "<br>",
+      "Projects: ", n_projects, "<br>",
+      "Total: $", formatC(total, format = "f", digits = 0, big.mark = ",")
+    ),
+    hoverinfo = "text"
+  ) |>
+  add_trace(
+    data = nih_annual_total,
+    x = ~fiscal_year,
+    y = ~grand_total,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Annual Total",
+    line = list(color = "#020506", width = 3),
+    marker = list(color = "#020506", size = 8),
+    text = ~paste0(
+      "<b>Annual Total</b><br>",
+      "FY ", fiscal_year, "<br>",
+      "Projects: ", n_projects, "<br>",
+      "Total: $", formatC(grand_total, format = "f", digits = 0, big.mark = ",")
+    ),
+    hoverinfo = "text"
+  ) |>
+  layout(
+    title = list(
+      text = "NIH Opioid Overdose Research Funding by Fiscal Year and IC",
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Fiscal Year", dtick = 1),
+    yaxis = list(title = "Total Award Amount ($)", separatethousands = TRUE),
+    barmode = "stack",
+    legend = list(
+      title = list(text = "NIH Institute/Center"),
+      orientation = "h",
+      y = -0.25, x = 0,
+      font = list(size = 9)
+    ),
+    hovermode = "x unified",
+    margin = list(b = 120),
+    height = 800
+  ) |>
+  config(displayModeBar = TRUE)
+
+nih_timeline_plot
+```
+
+#### What Is NIH Funding?
+
+The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full project dataset.
+
+```{r}
+#| label: nih-reporter-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+# Tokenize abstracts into individual words, remove stop words and generic terms
+nih_word_counts <- tibble(text = projects$abstract_text) |>
+  filter(!is.na(text), text != "") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "research", "project", "aim", "aims",
+                  "specific", "propose", "proposed", "will", "use",
+                  "data", "based", "including", "provide", "develop",
+                  "support", "national", "health", "program", "grant",
+                  "funding", "abstract", "1", "2", "3", "4", "5",
+                  "r01", "r21", "r34", "k01", "k23", "u01", "p50"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(nih_word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Highest-Funded Projects
+
+The table below shows the five largest NIH-funded opioid overdose research projects by award amount. For the full searchable and downloadable project dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
+
+```{r}
+#| label: nih-reporter-table
+#| eval: true
+#| code-fold: true
+
+projects |>
+  arrange(desc(award_amount)) |>
+  head(5) |>
+  select(
+    `Project Number` = project_num,
+    `Fiscal Year` = fiscal_year,
+    Title = title, PI = pi_name,
+    Organization = organization,
+    `Award Amount` = award_amount
+  ) |>
+  knitr::kable(
+    format.args = list(big.mark = ","),
+    caption = paste0(
+      "Top 5 NIH-Funded Opioid Overdose Research Projects by Award Amount (",
+      year_end - 4, "-", year_end, ")"
+    )
+  )
+```
+
+::: {.callout-note title="Data Source"}
+NIH RePORTER is the authoritative source for federally funded biomedical research. It covers grants from NIH, CDC, FDA, AHRQ, SAMHSA, and other HHS agencies. No authentication is required. The API returns project details, funding amounts, and links to resulting publications.
+:::
+
+### ClinicalTrials.gov (Clinical Research)
+
+[ClinicalTrials.gov](https://clinicaltrials.gov/) registers clinical studies on a wide range of conditions, including opioid use disorder treatment trials, naloxone distribution studies, and harm reduction interventions. The [v2 API](https://clinicaltrials.gov/data-api/about-api) supports structured queries.
+
+```{r}
+#| label: clinicaltrials-search
+#| eval: true
+#| code-fold: true
+
+# ClinicalTrials.gov v2 API: find opioid-related clinical trials
+# Documentation: https://clinicaltrials.gov/data-api/about-api
+# Paginate using nextPageToken to collect up to ~200 trials
+
+ct_url <- "https://clinicaltrials.gov/api/v2/studies"
+
+all_trials_raw <- list()
+next_token <- NULL
+for (pg in 1:10) {
+  ct_query <- list(
+    `query.cond`  = "opioid overdose",
+    `query.intr`  = "fentanyl OR naloxone OR buprenorphine",
+    `filter.overallStatus` = "RECRUITING,ACTIVE_NOT_RECRUITING,COMPLETED",
+    countTotal    = "true",
+    pageSize      = 100,
+    sort          = "LastUpdatePostDate:desc"
+  )
+  if (!is.null(next_token)) ct_query$pageToken <- next_token
+
+  ct_response <- request(ct_url) |>
+    req_url_query(!!!ct_query) |>
+    req_perform()
+
+  ct_data <- ct_response |>
+    resp_body_json()
+
+  if (length(ct_data$studies) == 0) break
+  all_trials_raw[[pg]] <- ct_data$studies
+  next_token <- ct_data$nextPageToken
+  if (is.null(next_token)) break
+}
+
+ct_total <- ct_data$totalCount
+
+trials <- lapply(unlist(all_trials_raw, recursive = FALSE), function(s) {
+  proto <- s$protocolSection
+  id_mod <- proto$identificationModule
+  status_mod <- proto$statusModule
+  sponsor_mod <- proto$sponsorCollaboratorsModule
+  design_mod <- proto$designModule
+  desc_mod <- proto$descriptionModule
+
+  tibble(
+    nct_id      = id_mod$nctId %||% NA_character_,
+    title       = id_mod$briefTitle %||% NA_character_,
+    status      = status_mod$overallStatus %||% NA_character_,
+    start_date  = status_mod$startDateStruct$date %||% NA_character_,
+    sponsor     = sponsor_mod$leadSponsor$name %||% NA_character_,
+    enrollment  = design_mod$enrollmentInfo$count %||% NA_integer_,
+    description = desc_mod$briefSummary %||% NA_character_
+  )
+}) |>
+  bind_rows()
+```
+
+The search matched **`r format(ct_total, big.mark = ",")`** studies. **`r nrow(trials)`** trials were retrieved for analysis.
+
+#### Clinical Trials Over Time
+
+The chart below shows the number of opioid-related clinical trials by their start year, broken down by status.
+
+```{r}
+#| label: clinicaltrials-timeline
+#| eval: true
+#| code-fold: true
+
+library(plotly)
+
+trials_timeline <- trials |>
+  mutate(
+    start_year = as.integer(substr(start_date, 1, 4))
+  ) |>
+  filter(!is.na(start_year)) |>
+  count(start_year, status, name = "n_trials") |>
+  arrange(start_year)
+
+# Brand-aligned status colors
+status_colors <- c(
+  "COMPLETED" = "#2494f7",
+  "ACTIVE_NOT_RECRUITING" = "#00a4bb",
+  "RECRUITING" = "#204d70"
+)
+
+ct_timeline_plot <- plot_ly(
+  data = trials_timeline,
+  x = ~start_year,
+  y = ~n_trials,
+  color = ~status,
+  colors = status_colors,
+  type = "bar",
+  text = ~paste0(
+    "<b>", start_year, "</b><br>",
+    status, ": ", n_trials, " trials"
+  ),
+  hoverinfo = "text"
+) |>
+  layout(
+    title = list(
+      text = "Opioid-Related Clinical Trials by Start Year and Status",
+      font = list(size = 16)
+    ),
+    xaxis = list(title = "Start Year", dtick = 1),
+    yaxis = list(title = "Number of Trials"),
+    barmode = "stack",
+    legend = list(
+      title = list(text = "Trial Status"),
+      orientation = "h",
+      y = -0.2, x = 0
+    ),
+    hovermode = "x unified"
+  ) |>
+  config(displayModeBar = TRUE)
+
+ct_timeline_plot
+```
+
+#### Clinical Trial Research Themes
+
+The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full trial dataset.
+
+```{r}
+#| label: clinicaltrials-wordcloud
+#| eval: true
+#| code-fold: true
+#| column: page
+#| fig-width: 14
+#| fig-height: 4
+#| out-width: "100%"
+
+ct_word_counts <- trials |>
+  mutate(text = paste(title, description, sep = " ")) |>
+  select(text) |>
+  filter(!is.na(text), text != " ") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(
+    !word %in% c("study", "trial", "clinical", "phase",
+                  "participants", "purpose", "determine",
+                  "evaluate", "assess", "including", "based",
+                  "aims", "aim", "objective", "primary"),
+    nchar(word) > 2,
+    !grepl("^[0-9]+$", word)
+  ) |>
+  count(word, sort = TRUE)
+
+ggplot(ct_word_counts |> head(80), aes(label = word, size = n, color = n)) +
+  geom_text_wordcloud_area(family = "sans", shape = "square") +
+  scale_size_area(max_size = 28) +
+  scale_color_gradient(low = "#204d70", high = "#2494f7") +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+```
+
+#### Most Recent Trials
+
+The table below shows the five most recently started opioid overdose intervention trials. For the full searchable and downloadable trial dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
+
+```{r}
+#| label: clinicaltrials-table
+#| eval: true
+#| code-fold: true
+
+trials |>
+  arrange(desc(start_date)) |>
+  head(5) |>
+  select(
+    `NCT ID` = nct_id, Title = title, Status = status,
+    `Start Date` = start_date, Sponsor = sponsor,
+    Enrollment = enrollment
+  ) |>
+  knitr::kable(
+    format.args = list(big.mark = ","),
+    caption = "5 Most Recent Opioid Overdose Intervention Trials"
+  )
+```
+
+::: {.callout-tip title="Reproducibility"}
+ClinicalTrials.gov does not require authentication. The v2 API returns JSON by default and supports filtering by condition, intervention, status, location, and date range. This is useful for mapping the research landscape around specific interventions (e.g., naloxone distribution, buprenorphine access).
+:::
+
 ### PubMed (NCBI E-utilities API)
 
 [PubMed](https://pubmed.ncbi.nlm.nih.gov/) indexes over 37 million biomedical citations. The [NCBI E-utilities API](https://www.ncbi.nlm.nih.gov/books/NBK25501/) enables programmatic search and retrieval without authentication (subject to rate limits of 3 requests per second without an API key, or 10 per second with one).
@@ -533,8 +1090,6 @@ Beyond surveillance data, a large and growing body of peer-reviewed research exa
 ```{r}
 #| label: pubmed-search
 #| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
 
 library(httr2)
 library(jsonlite)
@@ -735,206 +1290,6 @@ articles |>
 For higher rate limits, register for a free NCBI API key at [ncbi.nlm.nih.gov/account](https://www.ncbi.nlm.nih.gov/account/) and append `&api_key=YOUR_KEY` to requests. The E-utilities support complex Boolean queries using MeSH terms (e.g., `"Opiate Overdose"[MeSH] AND "Fentanyl"[MeSH]`) for more precise results.
 :::
 
-### NIH RePORTER (Funded Research Projects)
-
-[NIH RePORTER](https://reporter.nih.gov/) tracks all NIH-funded research projects, including active grants, publications, patents, and clinical trials. Its [API](https://api.reporter.nih.gov/) supports POST-based queries to identify what research is currently being funded on any topic.
-
-```{r}
-#| label: nih-reporter-search
-#| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
-#| code-fold: true
-
-# NIH RePORTER API: find funded opioid overdose research projects
-# Documentation: https://api.reporter.nih.gov/
-
-reporter_url <- "https://api.reporter.nih.gov/v2/projects/search"
-
-# Paginate to collect all available projects
-all_projects <- list()
-for (pg in 0:99) {
-  reporter_body <- list(
-    criteria = list(
-      advanced_text_search = list(
-        operator = "and",
-        search_field = "projecttitle,terms",
-        search_text = "opioid overdose fentanyl"
-      ),
-      fiscal_years = as.list((year_end - 4L):year_end),
-      exclude_subprojects = TRUE
-    ),
-    offset = pg * 100,
-    limit = 100,
-    sort_field = "FiscalYear",
-    sort_order = "desc"
-  )
-
-  reporter_response <- request(reporter_url) |>
-    req_body_json(reporter_body) |>
-    req_perform()
-
-  reporter_data <- reporter_response |>
-    resp_body_json()
-
-  if (length(reporter_data$results) == 0) break
-  all_projects[[pg + 1]] <- reporter_data$results
-  if (length(reporter_data$results) < 100) break
-}
-
-reporter_total <- reporter_data$meta$total
-
-# Parse all results into a dataframe
-projects <- lapply(unlist(all_projects, recursive = FALSE), function(p) {
-  tibble(
-    project_num   = p$project_num %||% NA_character_,
-    fiscal_year   = p$fiscal_year %||% NA_integer_,
-    title         = p$project_title %||% NA_character_,
-    pi_name       = {
-      if (!is.null(p$principal_investigators) && length(p$principal_investigators) > 0)
-        p$principal_investigators[[1]]$full_name
-      else NA_character_
-    },
-    organization  = p$organization$org_name %||% NA_character_,
-    award_amount  = p$award_amount %||% NA_real_,
-    abstract_text = p$abstract_text %||% NA_character_
-  )
-}) |>
-  bind_rows()
-```
-
-The search matched **`r format(reporter_total, big.mark = ",")`** projects. **`r format(nrow(projects), big.mark = ",")`** were retrieved, representing **$`r format(sum(projects$award_amount, na.rm = TRUE), big.mark = ",")`** in total funding.
-
-#### NIH Opioid Research Funding Over Time
-
-The chart below shows the distribution of NIH-funded opioid research project awards by fiscal year. Hover over each point to see the project title, PI, and award amount.
-
-```{r}
-#| label: nih-reporter-timeline
-#| eval: true
-#| code-fold: true
-
-library(plotly)
-
-# Summarize funding by fiscal year
-nih_annual <- projects |>
-  filter(!is.na(award_amount), !is.na(fiscal_year)) |>
-  group_by(fiscal_year) |>
-  summarise(
-    total_funding = sum(award_amount, na.rm = TRUE),
-    n_projects = n(),
-    .groups = "drop"
-  ) |>
-  arrange(fiscal_year)
-
-nih_timeline_plot <- plot_ly() |>
-  add_trace(
-    data = nih_annual,
-    x = ~fiscal_year,
-    y = ~total_funding,
-    type = "bar",
-    marker = list(color = "#2494f7"),
-    text = ~paste0(
-      "<b>FY ", fiscal_year, "</b><br>",
-      "Projects: ", n_projects, "<br>",
-      "Total funding: $", formatC(total_funding, format = "f",
-                                   digits = 0, big.mark = ",")
-    ),
-    hoverinfo = "text"
-  ) |>
-  layout(
-    title = list(
-      text = "NIH Opioid Overdose Research Funding by Fiscal Year",
-      font = list(size = 16)
-    ),
-    xaxis = list(
-      title = "Fiscal Year",
-      dtick = 1
-    ),
-    yaxis = list(
-      title = "Total Award Amount ($)",
-      separatethousands = TRUE
-    ),
-    hovermode = "x unified"
-  ) |>
-  config(displayModeBar = TRUE)
-
-nih_timeline_plot
-```
-
-#### What Is NIH Funding?
-
-The word cloud below visualizes the most frequent terms appearing in project abstracts across all `r nrow(projects)` retrieved NIH-funded opioid research projects, revealing the dominant research themes. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full project dataset.
-
-```{r}
-#| label: nih-reporter-wordcloud
-#| eval: true
-#| code-fold: true
-#| column: page
-#| fig-width: 14
-#| fig-height: 4
-#| out-width: "100%"
-
-# Tokenize abstracts into individual words, remove stop words and generic terms
-nih_word_counts <- tibble(text = projects$abstract_text) |>
-  filter(!is.na(text), text != "") |>
-  unnest_tokens(word, text) |>
-  anti_join(stop_words, by = "word") |>
-  filter(
-    !word %in% c("study", "research", "project", "aim", "aims",
-                  "specific", "propose", "proposed", "will", "use",
-                  "data", "based", "including", "provide", "develop",
-                  "support", "national", "health", "program", "grant",
-                  "funding", "abstract", "1", "2", "3", "4", "5",
-                  "r01", "r21", "r34", "k01", "k23", "u01", "p50"),
-    nchar(word) > 2,
-    !grepl("^[0-9]+$", word)
-  ) |>
-  count(word, sort = TRUE)
-
-ggplot(nih_word_counts |> head(80), aes(label = word, size = n, color = n)) +
-  geom_text_wordcloud_area(family = "sans", shape = "square") +
-  scale_size_area(max_size = 28) +
-  scale_color_gradient(low = "#204d70", high = "#2494f7") +
-  theme_minimal() +
-  theme(
-    plot.background = element_rect(fill = "white", color = NA),
-    plot.margin = margin(0, 0, 0, 0)
-  )
-```
-
-#### Highest-Funded Projects
-
-The table below shows the five largest NIH-funded opioid overdose research projects by award amount. For the full searchable and downloadable project dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
-
-```{r}
-#| label: nih-reporter-table
-#| eval: true
-#| code-fold: true
-
-projects |>
-  arrange(desc(award_amount)) |>
-  head(5) |>
-  select(
-    `Project Number` = project_num,
-    `Fiscal Year` = fiscal_year,
-    Title = title, PI = pi_name,
-    Organization = organization,
-    `Award Amount` = award_amount
-  ) |>
-  knitr::kable(
-    format.args = list(big.mark = ","),
-    caption = paste0(
-      "Top 5 NIH-Funded Opioid Overdose Research Projects by Award Amount (",
-      year_end - 4, "-", year_end, ")"
-    )
-  )
-```
-
-::: {.callout-note title="Data Source"}
-NIH RePORTER is the authoritative source for federally funded biomedical research. It covers grants from NIH, CDC, FDA, AHRQ, SAMHSA, and other HHS agencies. No authentication is required. The API returns project details, funding amounts, and links to resulting publications.
-:::
-
 ### Europe PMC (Open Access Literature)
 
 [Europe PMC](https://europepmc.org/) provides open access to a worldwide collection of life science publications, including all PubMed content plus preprints, patents, and clinical guidelines. Its [REST API](https://europepmc.org/RestfulWebService) is particularly useful for retrieving full-text open access articles.
@@ -942,8 +1297,6 @@ NIH RePORTER is the authoritative source for federally funded biomedical researc
 ```{r}
 #| label: europe-pmc-search
 #| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
 #| code-fold: true
 
 # Paginate to collect all available results (pageSize max is 1000)
@@ -1099,199 +1452,5 @@ epmc_articles |>
     )
   )
 ```
-
-### ClinicalTrials.gov (Clinical Research)
-
-[ClinicalTrials.gov](https://clinicaltrials.gov/) registers clinical studies on a wide range of conditions, including opioid use disorder treatment trials, naloxone distribution studies, and harm reduction interventions. The [v2 API](https://clinicaltrials.gov/data-api/about-api) supports structured queries.
-
-```{r}
-#| label: clinicaltrials-search
-#| eval: true
-#| cache: true
-#| cache.extra: !expr Sys.Date()
-#| code-fold: true
-
-# ClinicalTrials.gov v2 API: find opioid-related clinical trials
-# Documentation: https://clinicaltrials.gov/data-api/about-api
-# Paginate using nextPageToken to collect up to ~200 trials
-
-ct_url <- "https://clinicaltrials.gov/api/v2/studies"
-
-all_trials_raw <- list()
-next_token <- NULL
-for (pg in 1:10) {
-  ct_query <- list(
-    `query.cond`  = "opioid overdose",
-    `query.intr`  = "fentanyl OR naloxone OR buprenorphine",
-    `filter.overallStatus` = "RECRUITING,ACTIVE_NOT_RECRUITING,COMPLETED",
-    countTotal    = "true",
-    pageSize      = 100,
-    sort          = "LastUpdatePostDate:desc"
-  )
-  if (!is.null(next_token)) ct_query$pageToken <- next_token
-
-  ct_response <- request(ct_url) |>
-    req_url_query(!!!ct_query) |>
-    req_perform()
-
-  ct_data <- ct_response |>
-    resp_body_json()
-
-  if (length(ct_data$studies) == 0) break
-  all_trials_raw[[pg]] <- ct_data$studies
-  next_token <- ct_data$nextPageToken
-  if (is.null(next_token)) break
-}
-
-ct_total <- ct_data$totalCount
-
-trials <- lapply(unlist(all_trials_raw, recursive = FALSE), function(s) {
-  proto <- s$protocolSection
-  id_mod <- proto$identificationModule
-  status_mod <- proto$statusModule
-  sponsor_mod <- proto$sponsorCollaboratorsModule
-  design_mod <- proto$designModule
-  desc_mod <- proto$descriptionModule
-
-  tibble(
-    nct_id      = id_mod$nctId %||% NA_character_,
-    title       = id_mod$briefTitle %||% NA_character_,
-    status      = status_mod$overallStatus %||% NA_character_,
-    start_date  = status_mod$startDateStruct$date %||% NA_character_,
-    sponsor     = sponsor_mod$leadSponsor$name %||% NA_character_,
-    enrollment  = design_mod$enrollmentInfo$count %||% NA_integer_,
-    description = desc_mod$briefSummary %||% NA_character_
-  )
-}) |>
-  bind_rows()
-```
-
-The search matched **`r format(ct_total, big.mark = ",")`** studies. **`r nrow(trials)`** trials were retrieved for analysis.
-
-#### Clinical Trials Over Time
-
-The chart below shows the number of opioid-related clinical trials by their start year, broken down by status.
-
-```{r}
-#| label: clinicaltrials-timeline
-#| eval: true
-#| code-fold: true
-
-library(plotly)
-
-trials_timeline <- trials |>
-  mutate(
-    start_year = as.integer(substr(start_date, 1, 4))
-  ) |>
-  filter(!is.na(start_year)) |>
-  count(start_year, status, name = "n_trials") |>
-  arrange(start_year)
-
-# Brand-aligned status colors
-status_colors <- c(
-  "COMPLETED" = "#2494f7",
-  "ACTIVE_NOT_RECRUITING" = "#00a4bb",
-  "RECRUITING" = "#204d70"
-)
-
-ct_timeline_plot <- plot_ly(
-  data = trials_timeline,
-  x = ~start_year,
-  y = ~n_trials,
-  color = ~status,
-  colors = status_colors,
-  type = "bar",
-  text = ~paste0(
-    "<b>", start_year, "</b><br>",
-    status, ": ", n_trials, " trials"
-  ),
-  hoverinfo = "text"
-) |>
-  layout(
-    title = list(
-      text = "Opioid-Related Clinical Trials by Start Year and Status",
-      font = list(size = 16)
-    ),
-    xaxis = list(title = "Start Year", dtick = 1),
-    yaxis = list(title = "Number of Trials"),
-    barmode = "stack",
-    legend = list(
-      title = list(text = "Trial Status"),
-      orientation = "h",
-      y = -0.2, x = 0
-    ),
-    hovermode = "x unified"
-  ) |>
-  config(displayModeBar = TRUE)
-
-ct_timeline_plot
-```
-
-#### Clinical Trial Research Themes
-
-The word cloud below visualizes the most frequent terms in trial titles and descriptions, revealing the dominant intervention and population themes in clinical research. Use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/) to search, filter, and download the full trial dataset.
-
-```{r}
-#| label: clinicaltrials-wordcloud
-#| eval: true
-#| code-fold: true
-#| column: page
-#| fig-width: 14
-#| fig-height: 4
-#| out-width: "100%"
-
-ct_word_counts <- trials |>
-  mutate(text = paste(title, description, sep = " ")) |>
-  select(text) |>
-  filter(!is.na(text), text != " ") |>
-  unnest_tokens(word, text) |>
-  anti_join(stop_words, by = "word") |>
-  filter(
-    !word %in% c("study", "trial", "clinical", "phase",
-                  "participants", "purpose", "determine",
-                  "evaluate", "assess", "including", "based",
-                  "aims", "aim", "objective", "primary"),
-    nchar(word) > 2,
-    !grepl("^[0-9]+$", word)
-  ) |>
-  count(word, sort = TRUE)
-
-ggplot(ct_word_counts |> head(80), aes(label = word, size = n, color = n)) +
-  geom_text_wordcloud_area(family = "sans", shape = "square") +
-  scale_size_area(max_size = 28) +
-  scale_color_gradient(low = "#204d70", high = "#2494f7") +
-  theme_minimal() +
-  theme(
-    plot.background = element_rect(fill = "white", color = NA),
-    plot.margin = margin(0, 0, 0, 0)
-  )
-```
-
-#### Most Recent Trials
-
-The table below shows the five most recently started opioid overdose intervention trials. For the full searchable and downloadable trial dataset, use the [Drug Overdose Crisis Explorer](https://intersect-collaborations-llc.shinyapps.io/drug-overdose-explorer/).
-
-```{r}
-#| label: clinicaltrials-table
-#| eval: true
-#| code-fold: true
-
-trials |>
-  arrange(desc(start_date)) |>
-  head(5) |>
-  select(
-    `NCT ID` = nct_id, Title = title, Status = status,
-    `Start Date` = start_date, Sponsor = sponsor,
-    Enrollment = enrollment
-  ) |>
-  knitr::kable(
-    format.args = list(big.mark = ","),
-    caption = "5 Most Recent Opioid Overdose Intervention Trials"
-  )
-```
-
-::: {.callout-tip title="Reproducibility"}
-ClinicalTrials.gov does not require authentication. The v2 API returns JSON by default and supports filtering by condition, intervention, status, location, and date range. This is useful for mapping the research landscape around specific interventions (e.g., naloxone distribution, buprenorphine access).
-:::
 
 # References

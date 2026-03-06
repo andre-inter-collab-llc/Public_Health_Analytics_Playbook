@@ -418,6 +418,64 @@ server <- function(input, output, session) {
     )
   })
 
+  output$funding_by_agency <- renderPlotly({
+    req(funding_loaded())
+    awards <- funding_data()
+
+    by_agency <- awards |>
+      mutate(
+        start_date = as.Date(`Start Date`),
+        start_year = as.integer(format(start_date, "%Y")),
+        agency = `Awarding Sub Agency`
+      ) |>
+      filter(!is.na(start_year), !is.na(award_amount)) |>
+      group_by(start_year, agency) |>
+      summarise(total = sum(award_amount, na.rm = TRUE),
+                n_awards = n(), .groups = "drop")
+
+    annual_total <- by_agency |>
+      group_by(start_year) |>
+      summarise(grand_total = sum(total, na.rm = TRUE),
+                n_awards = sum(n_awards), .groups = "drop")
+
+    plot_ly() |>
+      add_trace(
+        data = by_agency, x = ~start_year, y = ~total,
+        color = ~agency, colors = agency_colors, type = "bar",
+        text = ~paste0("<b>", agency, "</b><br>",
+                       "Year: ", start_year, "<br>",
+                       "Awards: ", n_awards, "<br>",
+                       "Total: $", formatC(total, format = "f",
+                                            digits = 0, big.mark = ",")),
+        hoverinfo = "text"
+      ) |>
+      add_trace(
+        data = annual_total, x = ~start_year, y = ~grand_total,
+        type = "scatter", mode = "lines+markers",
+        name = "Annual Total",
+        line = list(color = "#020506", width = 3),
+        marker = list(color = "#020506", size = 8),
+        text = ~paste0("<b>Annual Total</b><br>",
+                       "Year: ", start_year, "<br>",
+                       "Awards: ", n_awards, "<br>",
+                       "Total: $", formatC(grand_total, format = "f",
+                                            digits = 0, big.mark = ",")),
+        hoverinfo = "text"
+      ) |>
+      layout(
+        title = list(text = paste0("Total Opioid-Related Federal Grant Funding by Agency (",
+                                   year_start, "\u2013", year_end, ")"),
+                     font = list(size = 17)),
+        xaxis = list(title = "Year", dtick = 1),
+        yaxis = list(title = "Total Funding ($)", separatethousands = TRUE),
+        barmode = "stack",
+        legend = list(title = list(text = "Agency"),
+                      orientation = "h", y = -0.18, x = 0,
+                      font = list(size = 10)),
+        hovermode = "x unified", margin = list(b = 140)
+      ) |> config(displayModeBar = TRUE)
+  })
+
   output$funding_timeline <- renderPlotly({
     req(funding_loaded())
     df <- funding_data() |>
@@ -686,29 +744,103 @@ server <- function(input, output, session) {
     )
   })
 
-  output$nih_timeline <- renderPlotly({
+  output$nih_by_ic <- renderPlotly({
     req(nih_loaded())
-    annual <- nih_data()$projects |>
-      filter(!is.na(award_amount), !is.na(fiscal_year)) |>
-      group_by(fiscal_year) |>
-      summarise(total_funding = sum(award_amount, na.rm = TRUE),
-                n_projects = n(), .groups = "drop") |>
-      arrange(fiscal_year)
+    projects <- nih_data()$projects
 
-    plot_ly(data = annual, x = ~fiscal_year, y = ~total_funding,
-            type = "bar", marker = list(color = brand$blue),
-            text = ~paste0("<b>FY ", fiscal_year, "</b><br>",
-                           "Projects: ", n_projects, "<br>",
-                           "Total: $", formatC(total_funding, format = "f",
-                                                digits = 0, big.mark = ",")),
-            hoverinfo = "text") |>
-      layout(title = list(text = "NIH Opioid Research Funding by Fiscal Year",
-                          font = list(size = 17)),
-             xaxis = list(title = "Fiscal Year", dtick = 1),
-             yaxis = list(title = "Total Award Amount ($)",
-                          separatethousands = TRUE),
-             hovermode = "x unified") |>
-      config(displayModeBar = TRUE)
+    by_ic <- projects |>
+      filter(!is.na(award_amount), !is.na(fiscal_year)) |>
+      mutate(ic_label = ifelse(is.na(ic_name), "Other", ic_name)) |>
+      group_by(fiscal_year, ic_label) |>
+      summarise(total = sum(award_amount, na.rm = TRUE),
+                n_projects = n(), .groups = "drop")
+
+    annual_total <- by_ic |>
+      group_by(fiscal_year) |>
+      summarise(grand_total = sum(total, na.rm = TRUE),
+                n_projects = sum(n_projects), .groups = "drop")
+
+    ic_colors <- c(
+      "#2494f7", "#00a4bb", "#01272f", "#204d70",
+      "#e07b39", "#6b4c9a", "#d94f4f", "#2ca02c",
+      "#8c564b", "#17becf", "#bcbd22", "#7f7f7f"
+    )
+
+    plot_ly() |>
+      add_trace(
+        data = by_ic, x = ~fiscal_year, y = ~total,
+        color = ~ic_label, colors = ic_colors, type = "bar",
+        text = ~paste0("<b>", ic_label, "</b><br>",
+                       "FY ", fiscal_year, "<br>",
+                       "Projects: ", n_projects, "<br>",
+                       "Total: $", formatC(total, format = "f",
+                                            digits = 0, big.mark = ",")),
+        hoverinfo = "text"
+      ) |>
+      add_trace(
+        data = annual_total, x = ~fiscal_year, y = ~grand_total,
+        type = "scatter", mode = "lines+markers",
+        name = "Annual Total",
+        line = list(color = "#020506", width = 3),
+        marker = list(color = "#020506", size = 8),
+        text = ~paste0("<b>Annual Total</b><br>",
+                       "FY ", fiscal_year, "<br>",
+                       "Projects: ", n_projects, "<br>",
+                       "Total: $", formatC(grand_total, format = "f",
+                                            digits = 0, big.mark = ",")),
+        hoverinfo = "text"
+      ) |>
+      layout(
+        title = list(text = "NIH Opioid Research Funding by Fiscal Year and IC",
+                     font = list(size = 17)),
+        xaxis = list(title = "Fiscal Year", dtick = 1),
+        yaxis = list(title = "Total Award Amount ($)", separatethousands = TRUE),
+        barmode = "stack",
+        legend = list(title = list(text = "NIH IC"),
+                      orientation = "h", y = -0.18, x = 0,
+                      font = list(size = 10)),
+        hovermode = "x unified", margin = list(b = 140)
+      ) |> config(displayModeBar = TRUE)
+  })
+
+  output$nih_scatter <- renderPlotly({
+    req(nih_loaded())
+    df <- nih_data()$projects |>
+      filter(!is.na(award_amount), !is.na(fiscal_year)) |>
+      mutate(
+        ic_label = ifelse(is.na(ic_name), "Other", ic_name),
+        hover_text = paste0(
+          "<b>", ic_label, "</b><br>",
+          "PI: ", pi_name, "<br>",
+          "Title: ", substr(title, 1, 80), "<br>",
+          "Award: $", formatC(award_amount, format = "f",
+                              digits = 0, big.mark = ",")
+        )
+      )
+
+    ic_colors <- c(
+      "#2494f7", "#00a4bb", "#01272f", "#204d70",
+      "#e07b39", "#6b4c9a", "#d94f4f", "#2ca02c",
+      "#8c564b", "#17becf", "#bcbd22", "#7f7f7f"
+    )
+
+    plot_ly(data = df, x = ~fiscal_year, y = ~award_amount,
+            color = ~ic_label, colors = ic_colors,
+            type = "scatter", mode = "markers",
+            marker = list(size = 9, opacity = 0.7),
+            text = ~hover_text, hoverinfo = "text") |>
+      layout(
+        title = list(text = paste0("NIH Opioid Research Project Awards (",
+                                   year_end - 4, "\u2013", year_end, ")"),
+                     font = list(size = 17)),
+        xaxis = list(title = "Fiscal Year", dtick = 1),
+        yaxis = list(title = "Award Amount ($)", separatethousands = TRUE,
+                     type = "log"),
+        legend = list(title = list(text = "NIH IC"),
+                      orientation = "h", y = -0.18, x = 0,
+                      font = list(size = 10)),
+        hovermode = "closest", margin = list(b = 140)
+      ) |> config(displayModeBar = TRUE)
   })
 
   output$nih_wordcloud <- renderPlotly({

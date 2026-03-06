@@ -157,12 +157,17 @@ ui <- page_navbar(
       tags$div(
         class = "d-flex flex-wrap gap-2 my-3 p-2 bg-light rounded shadow-sm",
         scroll_btn("funding-summary", "Summary"),
+        scroll_btn("funding-by-agency", "Funding by Agency"),
         scroll_btn("funding-timeline", "Timeline"),
         scroll_btn("funding-wc", "Word Cloud"),
         scroll_btn("funding-tbl", "Data Table")
       ),
       div(id = "funding-summary",
         card(card_header("Federal Funding Summary"), card_body(uiOutput("funding_summary_box")))
+      ),
+      div(id = "funding-by-agency",
+        card(card_header("Total Federal Funding by Agency"),
+             card_body(plotlyOutput("funding_by_agency", height = "800px")))
       ),
       div(id = "funding-timeline",
         card(card_header("Federal Grant Awards Over Time"),
@@ -199,16 +204,21 @@ ui <- page_navbar(
       tags$div(
         class = "d-flex flex-wrap gap-2 my-3 p-2 bg-light rounded shadow-sm",
         scroll_btn("nih-summary", "Summary"),
-        scroll_btn("nih-timeline", "Funding Timeline"),
+        scroll_btn("nih-by-ic", "Funding by IC"),
+        scroll_btn("nih-scatter", "Project Awards"),
         scroll_btn("nih-wc", "Word Cloud"),
         scroll_btn("nih-tbl", "Data Table")
       ),
       div(id = "nih-summary",
         card(card_header("NIH RePORTER Summary"), card_body(uiOutput("nih_summary_box")))
       ),
-      div(id = "nih-timeline",
-        card(card_header("NIH Opioid Research Funding by Fiscal Year"),
-             card_body(plotlyOutput("nih_timeline", height = "700px")))
+      div(id = "nih-by-ic",
+        card(card_header("NIH Funding by Institute/Center"),
+             card_body(plotlyOutput("nih_by_ic", height = "800px")))
+      ),
+      div(id = "nih-scatter",
+        card(card_header("NIH Project Awards Over Time"),
+             card_body(plotlyOutput("nih_scatter", height = "800px")))
       ),
       div(id = "nih-wc",
         card(card_header("Research Themes in Project Abstracts"),

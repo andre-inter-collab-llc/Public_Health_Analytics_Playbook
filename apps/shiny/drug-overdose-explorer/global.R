@@ -281,6 +281,11 @@ load_nih_reporter_data <- function() {
         else NA_character_
       },
       organization  = p$organization$org_name %||% NA_character_,
+      ic_name       = {
+        ics <- p$agency_ic_fundings
+        if (!is.null(ics) && length(ics) > 0) ics[[1]]$abbreviation %||% NA_character_
+        else NA_character_
+      },
       award_amount  = p$award_amount %||% NA_real_,
       abstract_text = p$abstract_text %||% NA_character_
     )
